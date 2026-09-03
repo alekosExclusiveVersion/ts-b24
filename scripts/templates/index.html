@@ -160,7 +160,7 @@ async function doSearch(resetOffset){
         <div class="tags">
           <span class="tag">кат ${esc(d.CATEGORY_ID)}</span>
           <span class="tag">${esc(d.stage_name||("стадия "+d.STAGE_ID))}</span>
-          ${d.OPPORTUNITY?`<span class="tag hl">${esc(d.OPPORTUNITY)} ₽</span>`:""}
+          ${d.OPPORTUNITY && d.CATEGORY_ID!=="1"?`<span class="tag hl">${esc(d.OPPORTUNITY)} ₽</span>`:""}
           <span class="tag">${esc(d.assigned_name||d.ASSIGNED_BY_ID||"—")}</span>
         </div>
         ${d.comments&&d.comments.trim()?`<div class="snippet">${esc(snippet(d.comments))}</div>`:""}`;
@@ -182,7 +182,7 @@ async function openDeal(id){
       ["Категория", d.category_name?`${d.CATEGORY_ID}: ${d.category_name}`:d.CATEGORY_ID],
       ["Стадия", d.stage_name?Array.isArray(d.stage_name)?d.stage_name[0]:d.stage_name:"-"],
       ["Ответственный", d.assigned_name ? `${d.assigned_name} (${d.ASSIGNED_BY_ID})` : (d.ASSIGNED_BY_ID||"-")],["Дата создания", d.DATE_CREATE],
-      ["Сумма", d.OPPORTUNITY?d.OPPORTUNITY+" ₽":"-"],
+      ["Сумма", d.CATEGORY_ID==="1" ? "-" : (d.OPPORTUNITY?d.OPPORTUNITY+" ₽":"-")],
       ["Источник", d.SOURCE_ID||"-"]
     ];
     let rows = fields.map(f=>`<tr><td>${esc(f[0])}</td><td>${esc(f[1])}</td></tr>`).join("");

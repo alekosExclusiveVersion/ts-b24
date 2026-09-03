@@ -1,5 +1,7 @@
 import argparse
+import html
 import json
+import re
 import sqlite3
 import sys
 import urllib.parse
@@ -11,6 +13,26 @@ from b24_client import PROJECT_ROOT
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
+
+
+_BB_ONLY = re.compile(r"\[(/?)(p|b|i|u|s|table|tr|td|th|div|span|br)([^\[\]]*)\]", re.I)
+_BB_URL = re.compile(r"\[URL(?:=[^\]]*)?\](.*?)\[/URL\]", re.I | re.S)
+_BB_IMG = re.compile(r"\[IMG[^\]]*\].*?\[/IMG\]", re.I | re.S)
+_BB_ANY = re.compile(r"\[[a-zA-Z/][a-zA-Z0-9_ ='\"\.\-:/]*\]")
+
+
+def clean_bb(text):
+    if not text:
+        return text
+    t = _BB_URL.sub(lambda m: m.group(1), text)
+    t = _BB_IMG.sub("", t)
+    t = _BB_ONLY.sub("", t)
+    t = _BB_ANY.sub("", t)
+    t = html.unescape(t)
+    t = re.sub(r"[ \t]+\n", "\n", t)
+    t = re.sub(r"\n{3,}", "\n\n", t)
+    return t.strip()
+
 
 
 class SearchApp:
@@ -91,6 +113,7 @@ class SearchApp:
         items = [dict(r) for r in rows]
         for it in items:
             it["assigned_name"] = self._user_name(it.get("ASSIGNED_BY_ID"))
+            it["comments"] = clean_bb(it.get("comments"))
         return {"total": total, "items": items,
                 "offset": offset, "limit": limit}
 
@@ -105,12 +128,19 @@ class SearchApp:
             return None
         d = dict(deal)
         d["assigned_name"] = self._user_name(d.get("ASSIGNED_BY_ID"))
-        d["category_name"] = self.conn.execute(
-            "SELECT NAME FROM deal_categories WHERE ID=?",
-            (d.get("CATEGORY_ID"),)).fetchone()[0] if d.get("CATEGORY_ID") else None
-        d["stage_name"] = self.conn.execute(
-            "SELECT NAME FROM deal_stages WHERE STATUS_ID=?",
-            (d.get("STAGE_ID"),)).fetchone()[0] if d.get("STAGE_ID") else None
+        d["COMMENTS"] = clean_bb(d.get("COMMENTS"))
+        try:
+            d["category_name"] = self.conn.execute(
+                "SELECT NAME FROM deal_categories WHERE ID=?",
+                (d.get("CATEGORY_ID"),)).fetchone()[0]
+        except TypeError:
+            d["category_name"] = f"Категория {d.get('CATEGORY_ID')}" if d.get("CATEGORY_ID") else None
+        try:
+            d["stage_name"] = self.conn.execute(
+                "SELECT NAME FROM deal_stages WHERE STATUS_ID=?",
+                (d.get("STAGE_ID"),)).fetchone()[0]
+        except TypeError:
+            d["stage_name"] = d.get("STAGE_ID") or None
         # связанные контакты
         d["contacts"] = [dict(r) for r in self.conn.execute(
             "SELECT ID, NAME_LAST, PHONE, EMAIL, COMPANY_TITLE FROM contacts WHERE ID = ?",
