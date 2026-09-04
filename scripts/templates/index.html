@@ -131,6 +131,37 @@ function snippet(comments){
   return norm.length>220 ? norm.slice(0,220)+"…" : norm;
 }
 
+const TYPE_ICON = {1:"📅",2:"📞",3:"✅",4:"✉️",5:"⚡",6:"🔧",0:""};
+const TYPE_DIR  = {1:"→",2:"←"}; // direction: 1 входящее
+
+function renderTimeline(tl){
+  if(!tl || !tl.count) return `
+    <h3>Переписка</h3><div class="empty" style="padding:12px">нет данных</div>`;
+  let items = [];
+  (tl.comments||[]).forEach(c=>{
+    items.push({t:c.created||"", badge:"комментарий", dir:"",
+      title: c.author_id?`автор #${c.author_id}`:"комментарий",
+      body: c.comment||""});
+  });
+  (tl.activities||[]).forEach(a=>{
+    items.push({t:a.start_time||a.start||"",
+      badge:(TYPE_ICON[a.type_id]||"")+" "+(a.type_name||"активность"),
+      dir:(TYPE_DIR[a.direction]||""),
+      title:a.subject||"",
+      body:a.description||""});
+  });
+  items.sort((x,y)=>(x.t||"").localeCompare(y.t||""));
+  const rows = items.map(it=>`
+    <div style="border-bottom:1px solid var(--border);padding:8px 0">
+      <div style="color:var(--muted);font-size:12px">
+        <span class="tag">${esc(it.badge)}</span> ${esc(it.t||"")} ${esc(it.dir)}
+      </div>
+      ${it.title?`<div style="font-weight:600;margin-top:3px">${esc(it.title)}</div>`:""}
+      ${it.body?`<div style="color:var(--text);white-space:pre-wrap;margin-top:3px;line-height:1.5">${esc(it.body)}</div>`:""}
+    </div>`).join("");
+  return `<h3>Переписка (${tl.count})</h3><div>${rows}</div>`;
+}
+
 async function doSearch(resetOffset){
   state.q = $("q").value;
   state.category = $("fCategory").value;
@@ -192,6 +223,7 @@ async function openDeal(id){
       <table>${rows}</table>
       <h3>Комментарии</h3>
       <pre>${d.COMMENTS?esc(d.COMMENTS):"— нет комментариев —"}</pre>
+      ${renderTimeline(d.timeline)}
       ${d.contacts&&d.contacts.length?`<h3>Контакты</h3><table>${
         d.contacts.map(k=>`<tr><td>${esc(k.NAME_LAST)}</td><td>${esc(k.PHONE||"")} ${esc(k.EMAIL||"")}</td></tr>`).join("")
       }</table>`:""}

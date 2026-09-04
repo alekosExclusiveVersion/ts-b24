@@ -14,6 +14,13 @@ from b24_client import PROJECT_ROOT
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 
+# crm.enum.activitytype: тип активности сделки
+ACTIVITY_TYPES = {
+    "1": "Встреча", "2": "Звонок", "3": "Задача", "4": "Письмо",
+    "5": "Действие", "6": "Пользовательское действие",
+    "0": "",
+}
+
 
 _BB_ONLY = re.compile(r"\[(/?)(p|b|i|u|s|table|tr|td|th|div|span|br)([^\[\]]*)\]", re.I)
 _BB_URL = re.compile(r"\[URL(?:=[^\]]*)?\](.*?)\[/URL\]", re.I | re.S)
@@ -141,6 +148,24 @@ class SearchApp:
                 (d.get("STAGE_ID"),)).fetchone()[0]
         except TypeError:
             d["stage_name"] = d.get("STAGE_ID") or None
+        # переписка: комментарии ленты + активности сделки
+        d["timeline"] = {
+            "comments": [dict(r) for r in self.conn.execute(
+                "SELECT id, created, comment, author_id FROM deal_comments "
+                "WHERE deal_id=? ORDER BY created, id", (d.get("ID"),))],
+            "activities": [dict(r) for r in self.conn.execute(
+                "SELECT id, type_id, subject, description, description_type, "
+                "start_time, completed, direction, provider_type_id, author_id "
+                "FROM deal_activities WHERE deal_id=? "
+                "ORDER BY COALESCE(start_time, created), id", (d.get("ID"),))],
+        }
+        for c in d["timeline"]["comments"]:
+            c["comment"] = clean_bb(c.get("comment"))
+        for a in d["timeline"]["activities"]:
+            a["description"] = clean_bb(a.get("description"))
+            a["type_name"] = ACTIVITY_TYPES.get(str(a.get("type_id")), "")
+        d["timeline"]["count"] = (
+            len(d["timeline"]["comments"]) + len(d["timeline"]["activities"]))
         # связанные контакты
         d["contacts"] = [dict(r) for r in self.conn.execute(
             "SELECT ID, NAME_LAST, PHONE, EMAIL, COMPANY_TITLE FROM contacts WHERE ID = ?",
