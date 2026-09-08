@@ -18,13 +18,18 @@ import argparse
 import sqlite3
 import sys
 import time
+import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from b24_client import B24Client, PROJECT_ROOT, _RetryableError
+from sync_logger import get_logger
+from sync_alert import alert_completed, alert_failed
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
+
+_log = get_logger("timeline", "sync_timeline.log")
 
 ACTIVITY_FIELDS = [
     "ID", "OWNER_ID", "OWNER_TYPE_ID", "TYPE_ID", "SUBJECT", "DESCRIPTION",
@@ -71,9 +76,10 @@ CREATE INDEX IF NOT EXISTS idx_activities_created ON deal_activities(created);
 """
 
 
-def connect():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
+def connect(db_path=None):
+    path = Path(db_path) if db_path else DB_PATH
+    path.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(path)
     conn.executescript(SCHEMA)
     conn.commit()
     return conn
@@ -100,6 +106,24 @@ def fetch_deal_ids_last_modify(conn, since_days, offset, limit):
         "ORDER BY DATE_MODIFY, ID LIMIT ? OFFSET ?",
         (since, limit, offset)).fetchall()
     return [r[0] for r in rows]
+
+
+def fetch_deal_ids_after(conn, since_date, offset, limit):
+    """Сделки, изменённые строго после since_date (для инкрементального режима)."""
+    rows = conn.execute(
+        "SELECT ID FROM deals WHERE DATE_MODIFY > ? "
+        "ORDER BY DATE_MODIFY, ID LIMIT ? OFFSET ?",
+        (since_date, limit, offset)).fetchall()
+    return [r[0] for r in rows]
+
+
+def max_modify_of_ids(conn, ids):
+    if not ids:
+        return None
+    ph = ",".join("?" * len(ids))
+    row = conn.execute(
+        f"SELECT MAX(DATE_MODIFY) FROM deals WHERE ID IN ({ph})", ids).fetchone()
+    return row[0] if row else None
 
 
 def build_batch_cmds(deal_ids):
@@ -153,6 +177,76 @@ def upsert_activities(conn, deal_id, items):
     return len(rows)
 
 
+def run_incremental(client, conn, args):
+    """Инкрементальный режим для cron: сделки, изменённые после пометки.
+
+    Может быть вызван несколько раз подряд, пока не будут покрыты все
+    изменившиеся сделки (если их больше, чем успели обработать за запуск,
+    следующая метка берётся с конца обработанных).
+    """
+    row = conn.execute(
+        "SELECT value FROM kb_meta WHERE key='timeline_last_date'").fetchone()
+    last_date = row[0] if row and row[0] else "1990-01-01T00:00:00"
+    batch = args.deals_per_batch
+
+    # верхняя граница — на момент старта, чтобы не зациклиться на сделках,
+    # появляющихся прямо во время работы
+    upper = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S")
+
+    since_date = last_date
+    t0 = time.time()
+    processed = 0
+    n_comments = 0
+    n_acts = 0
+    max_new_date = None
+
+    _log.info("Инкрементальный режим: сделки с DATE_MODIFY > %s", last_date)
+
+    offset_in_run = 0
+    while True:
+        deal_ids = fetch_deal_ids_after(conn, since_date, offset_in_run, batch)
+        if not deal_ids:
+            break
+        cmds = build_batch_cmds(deal_ids)
+        ok = False
+        try:
+            resp = client.batch(cmds)
+            ok = True
+        except Exception as e:
+            _log.warning("  batch ошибка: %s — повтор через 2с", str(e)[:150])
+            time.sleep(2)
+        if ok:
+            for i, did in enumerate(deal_ids):
+                comments = resp.get(f"c{i}") or []
+                acts = resp.get(f"a{i}") or []
+                n_comments += upsert_comments(conn, did, comments)
+                n_acts += upsert_activities(conn, did, acts)
+            conn.commit()
+            processed += len(deal_ids)
+            offset_in_run += len(deal_ids)
+            if processed % (batch * 40) == 0:
+                _log.info("  ... обработано %d сделок, комментарии %d, "
+                          "активности %d, за %dс",
+                          processed, n_comments, n_acts, time.time() - t0)
+            m = max_modify_of_ids(conn, deal_ids)
+            if m and (max_new_date is None or m > max_new_date):
+                max_new_date = m
+        time.sleep(0.5)
+
+    if max_new_date and max_new_date <= upper and processed:
+        conn.execute(
+            "INSERT OR REPLACE INTO kb_meta (key, value) "
+            "VALUES ('timeline_last_date', ?)", (max_new_date,))
+        conn.commit()
+        _log.info("Метка инкремента обновлена: %s", max_new_date)
+
+    el = time.time() - t0
+    _log.info("Инкремент готово. Обработано сделок: %d. Комментариев: %d, "
+              "активностей: %d. За %dс", processed, n_comments, n_acts, el)
+    conn.close()
+    return
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Загрузка переписок (комментарии + активности) по сделкам b24")
@@ -166,10 +260,41 @@ def main():
                     help="Ограничить общее число обработанных сделок за запуск")
     ap.add_argument("--reset", action="store_true",
                     help="Сбросить прогресс и начать заново")
+    ap.add_argument("--incremental", action="store_true",
+                    help="Инкремент: обработать сделки, изменённые после "
+                         "пометки timeline_last_date (для cron); метка "
+                         "обновляется в конце")
+    ap.add_argument("--db", default=str(DB_PATH),
+                    help="Путь к БД (по умолчанию data/ts_b24.db)")
     args = ap.parse_args()
 
+    t_start = time.time()
+    mode = "incremental" if args.incremental else "full"
+    _log.info("=== Запуск load_timeline (mode=%s) ===", mode)
+
+    try:
+        _run(args)
+        metrics = {
+            "mode": mode,
+            "status": "OK",
+            "duration_sec": round(time.time() - t_start, 1),
+        }
+        alert_completed("timeline", metrics)
+        _log.info("=== Завершено за %.1fс ===", time.time() - t_start)
+    except Exception as e:
+        tb = traceback.format_exc()
+        _log.error("Перевод прерван: %s", e)
+        _log.error("%s", tb)
+        alert_failed("timeline", str(e), tb)
+        raise
+
+
+def _run(args):
     client = B24Client()
-    conn = connect()
+    conn = connect(args.db)
+
+    if args.incremental:
+        return run_incremental(client, conn, args)
 
     since = _since_days_to_filter(args.since_days)
     if args.by_modify:
@@ -193,8 +318,8 @@ def main():
     offset = int(row[0]) if row and row[0] else 0
     if args.max_deals is not None:
         total = min(total, offset + args.max_deals)
-    print(f"Сделок за последние {args.since_days} дн (по {mode}): {total}")
-    print(f"Начинаю с offset={offset}")
+    _log.info("Сделок за последние %d дн (по %s): %d", args.since_days, mode, total)
+    _log.info("Начинаю с offset=%d", offset)
 
     t0 = time.time()
     processed = 0
@@ -220,8 +345,8 @@ def main():
             resp = client.batch(cmds)
             ok = True
         except (_RetryableError, Exception) as e:
-            print(f"  batch offset={offset} ошибка: {str(e)[:150]} "
-                  f"— повтор через 2с", flush=True)
+            _log.warning("  batch offset=%d ошибка: %s — повтор через 2с",
+                         offset, str(e)[:150])
             time.sleep(2)
         if ok:
             for i, did in enumerate(deal_ids):
@@ -235,15 +360,15 @@ def main():
             save_offset(offset)
             if processed == 0 or processed % (batch * 40) == 0:
                 el = time.time() - t0
-                print(f"  ... обработано {offset} / {total} сделок "
-                      f"(комментарии {n_comments}, активности {n_acts}) "
-                      f"за {el:.0f}с", flush=True)
+                _log.info("  ... обработано %d / %d сделок (комментарии %d, "
+                          "активности %d) за %dс", offset, total,
+                          n_comments, n_acts, el)
         # щадящая пауза между batch-запросами
         time.sleep(0.5)
 
     el = time.time() - t0
-    print(f"Готово. Обработано сделок: {processed}. "
-          f"Комментариев: {n_comments}, активностей: {n_acts}. За {el:.0f}с")
+    _log.info("Готово. Обработано сделок: %d. Комментариев: %d, активностей: %d. "
+              "За %dс", processed, n_comments, n_acts, el)
     conn.close()
 
 

@@ -1,12 +1,18 @@
 import json
 import random
+import sys
 import time
 import urllib.request
 import urllib.parse
 import urllib.error
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from sync_logger import get_logger
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+_log = get_logger("b24_client")
 
 RETRY_CODES = {
     "QUERY_LIMIT_EXCEEDED",       # 503 — перегрузка запросов
@@ -75,6 +81,8 @@ class B24Client:
                 body = json.loads(e.read().decode("utf-8"))
             except Exception:
                 body = {"error": "HTTP", "error_description": e.reason}
+            _log.warning("HTTP %d on %s: %s", http_code, method,
+                         body.get("error_description") or body.get("error"))
             if _is_retriable(body, http_code):
                 raise _RetryableError(body, http_code)
             if "error" in body:
@@ -83,6 +91,7 @@ class B24Client:
                 )
             raise B24Error(f"HTTP {e.code}: {e.reason}")
         except urllib.error.URLError as e:
+            _log.warning("Network error on %s: %s", method, e.reason)
             raise _RetryableError(
                 {"error": "NETWORK", "error_description": str(e.reason)}, 0
             )
@@ -100,6 +109,8 @@ class B24Client:
                 break
             except _RetryableError as e:
                 attempt += 1
+                _log.warning("Retry %d/8 for %s: %s", attempt, method,
+                             str(e)[:120])
                 if attempt > 8:
                     raise B24Error(
                         f"Слишком много повторов: "

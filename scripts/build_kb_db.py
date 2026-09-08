@@ -2,12 +2,18 @@ import argparse
 import sqlite3
 import sys
 import time
+import traceback
+from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from b24_client import B24Client, PROJECT_ROOT
+from sync_logger import get_logger
+from sync_alert import alert_completed, alert_failed
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
+
+_log = get_logger("update", "sync_update.log")
 
 # Пользовательские file-поля сделок (из crm.item.fields, entityTypeId=2)
 FILE_FIELDS = [
@@ -194,8 +200,8 @@ def load_users(client, user_ids):
                 out[str(u.get("ID"))] = (
                     u.get("NAME"), u.get("LAST_NAME"), u.get("LOGIN"))
     except Exception as e:
-        print(f"   (!) Нет прав на user.get — расшифровка пользователей "
-              f"пропущена. Ошибка: {str(e)[:100]}")
+        _log.warning("(user.get) Нет прав на user.get — расшифровка "
+                     "пользователей пропущена. Ошибка: %s", str(e)[:100])
     return out
 
 
@@ -271,6 +277,7 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
     files_total = 0
     page = 0
     buffer = []
+    max_date_modify = None
 
     def flush():
         nonlocal inserted, updated
@@ -297,13 +304,16 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
         if save_offset_cb and (page == 1 or page % progress_every == 0):
             save_offset_cb(cur_offset)
         if page % progress_every == 0:
-            print(f"   ... получено {cur_offset} / {total} сделок", flush=True)
+            _log.info("   ... получено %d / %s сделок", cur_offset, total)
 
     for items, total in client.paged_gentle(
             "crm.deal.list", params, step=50, max_deals=max_deals,
             on_progress=on_progress, select=select,
             start_offset=resume_offset):
         for d in items:
+            dm = d.get("DATE_MODIFY")
+            if dm and (max_date_modify is None or dm > max_date_modify):
+                max_date_modify = dm
             row = tuple(d.get(f) or None for f in deal_columns)
             buffer.append(row)
             if len(buffer) >= 500:
@@ -312,7 +322,7 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
             files_total += load_deal_files(conn, items, deal_columns)
     if buffer:
         flush()
-    return inserted, updated, files_total
+    return inserted, updated, files_total, max_date_modify
 
 
 def build_indexes(conn):
@@ -322,7 +332,7 @@ def build_indexes(conn):
             conn.execute(f"CREATE INDEX IF NOT EXISTS idx_deals_{col} "
                          f"ON deals ({col})")
         except Exception as e:
-            print(f"  (индекс {col}: {e})")
+            _log.warning("(индекс %s: %s)", col, e)
     conn.commit()
 
 
@@ -338,11 +348,34 @@ def main():
                          "после last_date_modify сделки (для регулярного пополнения)")
     args = ap.parse_args()
 
+    t_start = time.time()
+    mode = "rebuild" if args.rebuild else (
+        "update" if args.update else "full")
+    _log.info("=== Запуск build_kb_db (mode=%s) ===", mode)
+
+    try:
+        _run(args)
+        metrics = {
+            "mode": mode,
+            "status": "OK",
+            "duration_sec": round(time.time() - t_start, 1),
+        }
+        alert_completed("deals", metrics)
+        _log.info("=== Завершено за %.1fс ===", time.time() - t_start)
+    except Exception as e:
+        tb = traceback.format_exc()
+        _log.error("Перевод прерван: %s", e)
+        _log.error("%s", tb)
+        alert_failed("deals", str(e), tb)
+        raise
+
+
+def _run(args):
     client = B24Client()
     conn = connect()
 
     if args.rebuild:
-        print("Пересоздание схемы БД...")
+        _log.info("Пересоздание схемы БД...")
         rebuild(conn)
         resume_offset = 0
         since_date_modify = None
@@ -367,7 +400,7 @@ def main():
         fetch_target = None
     run_max = (fetch_target - resume_offset) if fetch_target is not None else None
 
-    print("Загрузка справочников...")
+    _log.info("Загрузка справочников...")
     categories = load_categories(client)
     insert_ref(conn, "deal_categories", categories, ["ID", "NAME"])
     stages = load_stages(client, categories)
@@ -377,8 +410,8 @@ def main():
     insert_ref(conn, "deal_types", load_status(client, "DEAL_TYPE"),
                ["ID", "NAME"])
     conn.commit()
-    print(f"   категорий: {len(categories)}, стадий: {len(stages)}")
-    print(f"   предыдущий прогресс: {resume_offset} сделок")
+    _log.info("   категорий: %d, стадий: %d", len(categories), len(stages))
+    _log.info("   предыдущий прогресс: %d сделок", resume_offset)
 
     def save_offset(cur):
         conn.execute(
@@ -387,30 +420,28 @@ def main():
         conn.commit()
 
     if resume_offset and not args.rebuild:
-        print(f"Режим возобновления с offset={resume_offset}...")
+        _log.info("Режим возобновления с offset=%d...", resume_offset)
     elif since_date_modify:
-        print(f"Инкрементальный режим: сделки изменённые после "
-              f"{since_date_modify}...")
+        _log.info("Инкрементальный режим: сделки изменённые после %s...",
+                  since_date_modify)
     else:
-        print("Выгрузка сделок (щадящий режим)...")
+        _log.info("Выгрузка сделок (щадящий режим)...")
+
     t0 = time.time()
-    inserted, updated, files_total = load_deals(
+    inserted, updated, files_total, batch_max_dm = load_deals(
         client, conn, max_deals=run_max,
         since_date_modify=since_date_modify,
         resume_offset=resume_offset, save_offset_cb=save_offset)
-    print(f"   сделок: вставлено {inserted}, обновлено {updated}, "
-          f"файлов: {files_total}, за {time.time()-t0:.1f} с", flush=True)
+    _log.info("   сделок: вставлено %d, обновлено %d, файлов: %d, за %.1f с",
+              inserted, updated, files_total, time.time() - t0)
 
-    if inserted or updated:
-        max_dm = conn.execute(
-            "SELECT MAX(DATE_MODIFY) FROM deals").fetchone()[0]
-        if max_dm:
-            conn.execute(
-                "INSERT OR REPLACE INTO kb_meta (key, value) "
-                "VALUES ('last_date_modify', ?)", (max_dm,))
-            conn.commit()
+    if since_date_modify and batch_max_dm:
+        conn.execute(
+            "INSERT OR REPLACE INTO kb_meta (key, value) "
+            "VALUES ('last_date_modify', ?)", (batch_max_dm,))
+        conn.commit()
 
-    print("Загрузка пользователей...")
+    _log.info("Загрузка пользователей...")
     all_deals = conn.execute("SELECT ID, ASSIGNED_BY_ID, CREATED_BY_ID, "
                              "MODIFY_BY_ID, MOVED_BY_ID, LAST_ACTIVITY_BY "
                              "FROM deals").fetchall()
@@ -431,17 +462,17 @@ def main():
                        [(prof_id, prof.get("NAME"), prof.get("LAST_NAME"),
                          prof.get("LOGIN"))],
                        ["ID", "NAME", "LAST_NAME", "LOGIN"])
-            print("   добавлен профиль текущего пользователя (ID "
-                  f"{prof_id}) из profile")
+            _log.info("   добавлен профиль текущего пользователя (ID %s) "
+                      "из profile", prof_id)
         except Exception as e:
-            print(f"   (!) profile недоступен: {str(e)[:80]}")
+            _log.warning("   (!) profile недоступен: %s", str(e)[:80])
     conn.commit()
     if users:
-        print(f"   пользователей: {len(users)}")
+        _log.info("   пользователей: %d", len(users))
     else:
-        print("   пользователей: недоступно (нет прав) — сохранены только ID")
+        _log.info("   пользователей: недоступно (нет прав) — сохранены только ID")
 
-    print("Создание индексов...")
+    _log.info("Создание индексов...")
     build_indexes(conn)
 
     count = conn.execute("SELECT COUNT(*) FROM deals").fetchone()[0]
@@ -449,7 +480,8 @@ def main():
     conn.execute("INSERT OR REPLACE INTO kb_meta (key, value) VALUES ('deal_count', ?)",
                  (str(count),))
     conn.commit()
-    print(f"Готово. Всего сделок в БД: {count}, файлов в deal_files: {files}")
+    _log.info("Готово. Всего сделок в БД: %d, файлов в deal_files: %d",
+              count, files)
     conn.close()
 
 

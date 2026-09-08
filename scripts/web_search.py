@@ -41,6 +41,30 @@ def clean_bb(text):
     return t.strip()
 
 
+_TAG_RE = re.compile(r"<[^>]+>")
+_BR_RE = re.compile(r"<br\s*/?>", re.I)
+_DIV_RE = re.compile(r"</?(?:div|p|span|table|tr|td|th|tbody|thead|blockquote|section|article|header|footer|ul|ol|li|dl|dt|dd|h[1-6])[^>]*>", re.I)
+_STYLE_RE = re.compile(r"<style[^>]*>.*?</style>", re.I | re.S)
+_SCRIPT_RE = re.compile(r"<script[^>]*>.*?</script>", re.I | re.S)
+_TRACKING_RE = re.compile(r'<img[^>]+(?:width|height)\s*=\s*["\']?1["\']?[^>]*>', re.I)
+_MULTI_NL = re.compile(r"\n{3,}")
+
+
+def strip_html(text):
+    if not text:
+        return text
+    t = _STYLE_RE.sub("", text)
+    t = _SCRIPT_RE.sub("", t)
+    t = _TRACKING_RE.sub("", t)
+    t = _BR_RE.sub("\n", t)
+    t = _DIV_RE.sub("\n", t)
+    t = _TAG_RE.sub("", t)
+    t = html.unescape(t)
+    t = re.sub(r"[ \t]+\n", "\n", t)
+    t = re.sub(r"\n{3,}", "\n\n", t)
+    return t.strip()
+
+
 
 class SearchApp:
     def __init__(self, db_path=None):
@@ -120,7 +144,7 @@ class SearchApp:
         items = [dict(r) for r in rows]
         for it in items:
             it["assigned_name"] = self._user_name(it.get("ASSIGNED_BY_ID"))
-            it["comments"] = clean_bb(it.get("comments"))
+            it["comments"] = strip_html(clean_bb(it.get("comments")))
         return {"total": total, "items": items,
                 "offset": offset, "limit": limit}
 
@@ -135,7 +159,7 @@ class SearchApp:
             return None
         d = dict(deal)
         d["assigned_name"] = self._user_name(d.get("ASSIGNED_BY_ID"))
-        d["COMMENTS"] = clean_bb(d.get("COMMENTS"))
+        d["COMMENTS"] = strip_html(clean_bb(d.get("COMMENTS")))
         try:
             d["category_name"] = self.conn.execute(
                 "SELECT NAME FROM deal_categories WHERE ID=?",
@@ -152,7 +176,8 @@ class SearchApp:
         d["timeline"] = {
             "comments": [dict(r) for r in self.conn.execute(
                 "SELECT id, created, comment, author_id FROM deal_comments "
-                "WHERE deal_id=? ORDER BY created, id", (d.get("ID"),))],
+                "WHERE deal_id=? AND author_id != '13797' ORDER BY created, id",
+                (d.get("ID"),))],
             "activities": [dict(r) for r in self.conn.execute(
                 "SELECT id, type_id, subject, description, description_type, "
                 "start_time, completed, direction, provider_type_id, author_id "
@@ -160,9 +185,9 @@ class SearchApp:
                 "ORDER BY COALESCE(start_time, created), id", (d.get("ID"),))],
         }
         for c in d["timeline"]["comments"]:
-            c["comment"] = clean_bb(c.get("comment"))
+            c["comment"] = strip_html(clean_bb(c.get("comment")))
         for a in d["timeline"]["activities"]:
-            a["description"] = clean_bb(a.get("description"))
+            a["description"] = strip_html(clean_bb(a.get("description")))
             a["type_name"] = ACTIVITY_TYPES.get(str(a.get("type_id")), "")
         d["timeline"]["count"] = (
             len(d["timeline"]["comments"]) + len(d["timeline"]["activities"]))

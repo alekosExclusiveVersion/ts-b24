@@ -2,12 +2,17 @@ import argparse
 import sqlite3
 import sys
 import time
+import traceback
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from b24_client import PROJECT_ROOT
+from sync_logger import get_logger
+from sync_alert import alert_completed, alert_failed
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
+
+_log = get_logger("fts", "sync_fts.log")
 
 FTS_SCHEMA = """
 CREATE VIRTUAL TABLE IF NOT EXISTS deals_fts USING fts5(
@@ -32,7 +37,7 @@ def rebuild(conn):
     conn.execute("DROP TABLE IF EXISTS deals_fts")
     conn.executescript(FTS_SCHEMA)
     conn.commit()
-    print("deals_fts создана")
+    _log.info("deals_fts создана")
 
 
 def fill(conn, batch=500):
@@ -50,20 +55,26 @@ def fill(conn, batch=500):
     for r in rows:
         buf.append(r)
         if len(buf) >= batch:
-            conn.executemany(
-                "INSERT INTO deals_fts (deal_id,title,comments,company_title,"
-                "category_id,stage_id,assigned_by_id,date_create,stage_semantic) "
-                "VALUES (?,?,?,?,?,?,?,?,?)", buf)
+            flush_buf(conn, buf)
             n += len(buf)
             buf.clear()
     if buf:
-        conn.executemany(
-            "INSERT INTO deals_fts (deal_id,title,comments,company_title,"
-            "category_id,stage_id,assigned_by_id,date_create,stage_semantic) "
-            "VALUES (?,?,?,?,?,?,?,?,?)", buf)
+        flush_buf(conn, buf)
         n += len(buf)
     conn.commit()
-    print(f"В FTS проиндексировано: {n} сделок за {time.time()-t0:.1f}с")
+    _log.info("В FTS проиндексировано: %d сделок за %.1fс", n,
+              time.time() - t0)
+
+
+def flush_buf(conn, buf):
+    # идемпотентность: удаляем индексируемые записи, затем вставляем заново
+    ids = [r[0] for r in buf]
+    placeholders = ",".join("?" * len(ids))
+    conn.execute(f"DELETE FROM deals_fts WHERE deal_id IN ({placeholders})", ids)
+    conn.executemany(
+        "INSERT INTO deals_fts (deal_id,title,comments,company_title,"
+        "category_id,stage_id,assigned_by_id,date_create,stage_semantic) "
+        "VALUES (?,?,?,?,?,?,?,?,?)", buf)
 
 
 def main():
@@ -72,16 +83,32 @@ def main():
                     help="Пересоздать индекс с нуля")
     args = ap.parse_args()
 
-    conn = connect()
-    if args.rebuild:
-        rebuild(conn)
+    t_start = time.time()
+    mode = "rebuild" if args.rebuild else "fill"
+    _log.info("=== Запуск build_fts (mode=%s) ===", mode)
+
+    try:
+        conn = connect()
+        if args.rebuild:
+            rebuild(conn)
         fill(conn)
-    else:
-        # дополняем недостающее
-        fill(conn)
-    count = conn.execute("SELECT COUNT(*) FROM deals_fts").fetchone()[0]
-    print(f"Итого записей в deals_fts: {count}")
-    conn.close()
+        count = conn.execute("SELECT COUNT(*) FROM deals_fts").fetchone()[0]
+        _log.info("Итого записей в deals_fts: %d", count)
+        conn.close()
+        metrics = {
+            "mode": mode,
+            "status": "OK",
+            "rows": count,
+            "duration_sec": round(time.time() - t_start, 1),
+        }
+        alert_completed("fts", metrics)
+        _log.info("=== Завершено за %.1fс ===", time.time() - t_start)
+    except Exception as e:
+        tb = traceback.format_exc()
+        _log.error("Перевод прерван: %s", e)
+        _log.error("%s", tb)
+        alert_failed("fts", str(e), tb)
+        raise
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>База знаний Ти-Би-24</title>
+<title>Поиск по данным в b24</title>
 <style>
 :root{
   --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --border:#2a2f3a;
@@ -47,7 +47,8 @@ button:hover{background:var(--accent2)}
 .nav{display:flex;gap:8px;align-items:center;margin:14px 0;color:var(--muted);font-size:13px}
 .nav button{padding:6px 12px;font-size:13px}
 #detail{display:none;background:var(--panel);border:1px solid var(--border);
-  border-radius:10px;padding:16px;margin-bottom:14px}
+  border-radius:10px;padding:16px;margin-bottom:14px;
+  max-height:70vh;overflow-y:auto;position:sticky;top:8px;z-index:10}
 #detail h2{margin:0 0 10px;font-size:17px}
 #detail .back{background:var(--panel2);color:var(--text);border:1px solid var(--border);
   padding:6px 12px;border-radius:6px;margin-bottom:12px;font-size:13px}
@@ -66,7 +67,7 @@ button:hover{background:var(--accent2)}
 <body>
 <div class="container">
   <header>
-    <h1>База знаний Ти-Би-24</h1>
+    <h1>Поиск по данным в b24</h1>
     <div class="sub">Поиск по сделкам Б24 · <span id="dbinfo"></span></div>
   </header>
 
@@ -206,6 +207,7 @@ async function doSearch(resetOffset){
 
 async function openDeal(id){
   try{
+    $("detail").style.display="none";
     const d = await api("/api/deal?id="+encodeURIComponent(id));
     const det = $("detail");
     const fields = [
