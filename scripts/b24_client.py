@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import sys
 import time
@@ -47,8 +48,11 @@ class B24Client:
         self._cache = {}
 
     def _load_config(self, env_file):
-        env_file = env_file or Path(__file__).resolve().parent.parent / ".env"
         env = {}
+        if env_file:
+            env_file = Path(env_file)
+        else:
+            env_file = Path(__file__).resolve().parent.parent / ".env"
         if Path(env_file).exists():
             for line in Path(env_file).read_text().splitlines():
                 line = line.strip()
@@ -57,9 +61,10 @@ class B24Client:
                 k, v = line.split("=", 1)
                 env[k.strip()] = v.strip().strip('"').strip("'")
         base = env.get(
-            "B24_BASE_URL", "https://b24.tradesoft.ru/rest/176/"
+            "B24_BASE_URL",
+            os.environ.get("B24_BASE_URL", "https://b24.tradesoft.ru/rest/176/"),
         )
-        token = env.get("B24_WEBHOOK_TOKEN", "")
+        token = env.get("B24_WEBHOOK_TOKEN") or os.environ.get("B24_WEBHOOK_TOKEN", "")
         if not token:
             raise B24Error("B24_WEBHOOK_TOKEN не найден в .env")
         return base.rstrip("/") + "/", token
