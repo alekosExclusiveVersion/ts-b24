@@ -1,7 +1,8 @@
 #!/bin/bash
 # Обновление базы сделок b24: инкрементально (--update) по DATE_MODIFY.
 # Алерты (успех/ошибка) отправляет сам build_kb_db.py через sync_alert.
-# После успешного обновления перестраивается FTS-индекс (build_fts.py --rebuild).
+# После успешного обновления FTS-индекс достраивается инкрементально
+# (build_fts.py без --rebuild; --rebuild только вручную при рассинхроне).
 set +e
 LOG="$HOME/work/ts-b24/data/update.log"
 SCRIPT_DIR="$HOME/work/ts-b24/scripts"
@@ -13,8 +14,8 @@ echo "===== $run_timestamp =====" >> "$LOG"
 rc=$?
 
 if [ $rc -eq 0 ]; then
-  echo ">>> FTS rebuild" >> "$LOG"
-  /opt/homebrew/bin/python3 "$SCRIPT_DIR/build_fts.py" --rebuild 2>&1
+  echo ">>> FTS incremental" >> "$LOG"
+  /opt/homebrew/bin/python3 "$SCRIPT_DIR/build_fts.py" 2>&1
   rc=$?
 fi
 

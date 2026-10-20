@@ -1,6 +1,7 @@
 import argparse
 import html
 import json
+import os
 import re
 import sqlite3
 import sys
@@ -20,6 +21,10 @@ ACTIVITY_TYPES = {
     "5": "Действие", "6": "Пользовательское действие",
     "0": "",
 }
+
+# Системный автор авто-комментариев портала — скрыт из переписки сделки.
+# Переопределение без правки кода: env B24_HIDDEN_AUTHOR_ID.
+HIDDEN_AUTHOR_ID = os.environ.get("B24_HIDDEN_AUTHOR_ID", "13797")
 
 
 _BB_ONLY = re.compile(r"\[(/?)(p|b|i|u|s|table|tr|td|th|div|span|br)([^\[\]]*)\]", re.I)
@@ -69,7 +74,10 @@ def strip_html(text):
 class SearchApp:
     def __init__(self, db_path=None):
         self.db_path = str(db_path or DB_PATH)
-        self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self.conn = sqlite3.connect(self.db_path, check_same_thread=False,
+                                     timeout=30)
+        self.conn.execute("PRAGMA journal_mode=WAL;")
+        self.conn.execute("PRAGMA busy_timeout=30000;")
         self.conn.row_factory = sqlite3.Row
         self._categories = None
         self._stages = None
@@ -80,6 +88,22 @@ class SearchApp:
                 "SELECT ID, NAME FROM deal_categories ORDER BY ID")]
         return self._categories
 
+    def _stage_name(self, status_id, category_id):
+        # STATUS_ID неуникален между воронками — ищем в паре с CATEGORY_ID,
+        # при промахе откатываемся на STATUS_ID, затем на сырой ID.
+        if not status_id:
+            return None
+        row = None
+        if category_id:
+            row = self.conn.execute(
+                "SELECT NAME FROM deal_stages WHERE STATUS_ID=? AND CATEGORY_ID=?",
+                (status_id, category_id)).fetchone()
+        if row is None:
+            row = self.conn.execute(
+                "SELECT NAME FROM deal_stages WHERE STATUS_ID=?",
+                (status_id,)).fetchone()
+        return row[0] if row else status_id
+
     def _user_name(self, uid):
         if not uid:
             return None
@@ -88,6 +112,84 @@ class SearchApp:
         if not row:
             return str(uid)
         return f"{row[0]} {row[1]}".strip() or str(uid)
+
+    # Имя ответственного одним JOIN вместо N запросов _user_name.
+    _ASSIGNED_SQL = (
+        "COALESCE(NULLIF(TRIM(COALESCE(u.LAST_NAME,'') || ' ' || "
+        "COALESCE(u.NAME,'')), ''), d.ASSIGNED_BY_ID) AS assigned_name"
+    )
+
+    def _select_deals(self, where_sql, args, order_sql, limit, offset):
+        rows = self.conn.execute(f"""
+            SELECT d.ID, d.TITLE, d.COMPANY_ID, c.TITLE AS company_title,
+                   d.CATEGORY_ID, d.STAGE_ID, s.NAME AS stage_name,
+                   d.ASSIGNED_BY_ID, {self._ASSIGNED_SQL},
+                   d.DATE_CREATE, d.OPPORTUNITY,
+                   COALESCE(d.COMMENTS,'') AS comments
+            FROM deals d
+            LEFT JOIN deal_stages s
+              ON s.STATUS_ID = d.STAGE_ID AND s.CATEGORY_ID = d.CATEGORY_ID
+            LEFT JOIN companies c ON c.ID = d.COMPANY_ID
+            LEFT JOIN users u ON u.ID = d.ASSIGNED_BY_ID
+            {where_sql}
+            {order_sql}
+            LIMIT ? OFFSET ?
+        """, args + [limit, offset]).fetchall()
+        items = [dict(r) for r in rows]
+        for it in items:
+            it["comments"] = strip_html(clean_bb(it.get("comments")))
+        return items
+
+    def _fts_match(self, q):
+        """Преобразует запрос пользователя в FTS5 MATCH с префиксным поиском.
+        Возвращает None, если токенов нет (тогда caller идёт в LIKE-фолбэк)."""
+        toks = re.findall(r"[^\W_]+", q.lower(), re.U)
+        toks = [t for t in toks if len(t) >= 2][:10]
+        if not toks:
+            return None
+        return " AND ".join('"' + t.replace('"', '""') + '"*' for t in toks)
+
+    def _search_fts(self, match, category, assigned, date_from, date_to,
+                    limit, offset):
+        """Поиск через deals_fts с ранжированием bm25. Возвращает None,
+        если FTS неприменим (синтаксис/пусто) — тогда caller делает LIKE."""
+        fts_where = ["deals_fts MATCH ?"]
+        fts_args = [match]
+        if category:
+            fts_where.append("category_id = ?")
+            fts_args.append(category)
+        if assigned:
+            fts_where.append("assigned_by_id = ?")
+            fts_args.append(assigned)
+        if date_from:
+            fts_where.append("date_create >= ?")
+            fts_args.append(date_from + " 00:00:00")
+        if date_to:
+            fts_where.append("date_create <= ?")
+            fts_args.append(date_to + " 23:59:59")
+        fts_sql = " WHERE " + " AND ".join(fts_where)
+        try:
+            total = self.conn.execute(
+                f"SELECT COUNT(*) FROM deals_fts{fts_sql}", fts_args).fetchone()[0]
+        except sqlite3.OperationalError:
+            return None
+        if not total:
+            return None
+        rows = self.conn.execute(
+            f"SELECT deal_id FROM deals_fts{fts_sql} "
+            f"ORDER BY bm25(deals_fts) LIMIT ? OFFSET ?",
+            fts_args + [limit, offset]).fetchall()
+        ids = [r[0] for r in rows]
+        if not ids:
+            return {"total": total, "items": [],
+                    "offset": offset, "limit": limit}
+        ph = ",".join("?" * len(ids))
+        items = self._select_deals(f"WHERE d.ID IN ({ph})", ids,
+                                   "", len(ids), 0)
+        by_id = {it["ID"]: it for it in items}
+        ordered = [by_id[i] for i in ids if i in by_id]
+        return {"total": total, "items": ordered,
+                "offset": offset, "limit": limit}
 
     def search(self, params):
         q = (params.get("q") or "").strip()
@@ -98,12 +200,19 @@ class SearchApp:
         limit = min(int(params.get("limit") or 50), 200)
         offset = max(int(params.get("offset") or 0), 0)
 
+        if q:
+            # Сначала FTS5 (ранжирование через bm25); при промахе
+            # (_search_fts вернул None: синтаксис/пусто/частичные слова) —
+            # LIKE-фолбэк ниже.
+            fts_res = self._search_fts(self._fts_match(q) or "", category,
+                                       assigned, date_from, date_to,
+                                       limit, offset)
+            if fts_res is not None:
+                return fts_res
+
         where = []
         args = []
-
         if q:
-            # Подбор фрагмента: FTS (точные слова) для ранжирования + LIKE (и фрагменты).
-            # LIKE нужен для частичных слов на русском, которые FTS5 не находит как токен.
             like_where = "((d.TITLE LIKE ?) OR (COALESCE(d.COMMENTS,'') LIKE ?) OR (COALESCE(c.TITLE,'') LIKE ?))"
             like_args = ["%" + q + "%"] * 3
             where.append(like_where)
@@ -128,23 +237,8 @@ class SearchApp:
             f"LEFT JOIN companies c ON c.ID = d.COMPANY_ID{where_sql}",
             args).fetchone()[0]
 
-        rows = self.conn.execute(f"""
-            SELECT d.ID, d.TITLE, d.COMPANY_ID, c.TITLE AS company_title,
-                   d.CATEGORY_ID, d.STAGE_ID, s.NAME AS stage_name,
-                   d.ASSIGNED_BY_ID, d.DATE_CREATE, d.OPPORTUNITY,
-                   COALESCE(d.COMMENTS,'') AS comments
-            FROM deals d
-            LEFT JOIN deal_stages s ON s.STATUS_ID = d.STAGE_ID
-            LEFT JOIN companies c ON c.ID = d.COMPANY_ID
-            {where_sql}
-            ORDER BY d.DATE_CREATE DESC
-            LIMIT ? OFFSET ?
-        """, args + [limit, offset]).fetchall()
-
-        items = [dict(r) for r in rows]
-        for it in items:
-            it["assigned_name"] = self._user_name(it.get("ASSIGNED_BY_ID"))
-            it["comments"] = strip_html(clean_bb(it.get("comments")))
+        items = self._select_deals(where_sql, args,
+                                   "ORDER BY d.DATE_CREATE DESC", limit, offset)
         return {"total": total, "items": items,
                 "offset": offset, "limit": limit}
 
@@ -166,18 +260,14 @@ class SearchApp:
                 (d.get("CATEGORY_ID"),)).fetchone()[0]
         except TypeError:
             d["category_name"] = f"Категория {d.get('CATEGORY_ID')}" if d.get("CATEGORY_ID") else None
-        try:
-            d["stage_name"] = self.conn.execute(
-                "SELECT NAME FROM deal_stages WHERE STATUS_ID=?",
-                (d.get("STAGE_ID"),)).fetchone()[0]
-        except TypeError:
-            d["stage_name"] = d.get("STAGE_ID") or None
+        d["stage_name"] = self._stage_name(d.get("STAGE_ID"),
+                                            d.get("CATEGORY_ID"))
         # переписка: комментарии ленты + активности сделки
         d["timeline"] = {
             "comments": [dict(r) for r in self.conn.execute(
                 "SELECT id, created, comment, author_id FROM deal_comments "
-                "WHERE deal_id=? AND author_id != '13797' ORDER BY created, id",
-                (d.get("ID"),))],
+                "WHERE deal_id=? AND author_id != ? ORDER BY created, id",
+                (d.get("ID"), HIDDEN_AUTHOR_ID))],
             "activities": [dict(r) for r in self.conn.execute(
                 "SELECT id, type_id, subject, description, description_type, "
                 "start_time, completed, direction, provider_type_id, author_id "
@@ -207,9 +297,12 @@ class SearchApp:
         return d.get("CONTACT_ID")
 
     def assigned_users(self):
-        return [{"id": str(r[0]), "name": self._user_name(r[0])} for r in self.conn.execute(
-            "SELECT DISTINCT ASSIGNED_BY_ID AS id FROM deals "
-            "WHERE ASSIGNED_BY_ID IS NOT NULL ORDER BY ASSIGNED_BY_ID")]
+        return [{"id": str(r[0]), "name": r[1]} for r in self.conn.execute(
+            "SELECT DISTINCT d.ASSIGNED_BY_ID AS id, "
+            "COALESCE(NULLIF(TRIM(COALESCE(u.LAST_NAME,'') || ' ' || "
+            "COALESCE(u.NAME,'')), ''), d.ASSIGNED_BY_ID) AS name "
+            "FROM deals d LEFT JOIN users u ON u.ID = d.ASSIGNED_BY_ID "
+            "WHERE d.ASSIGNED_BY_ID IS NOT NULL ORDER BY d.ASSIGNED_BY_ID")]
 
 
 class Handler(BaseHTTPRequestHandler):
