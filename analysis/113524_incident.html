@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Заявка #113524 — не работает API китайских каталогов</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.25rem; border-bottom: 2px solid #7a7a; padding-bottom: .4rem; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { border: 1px solid #999; padding: .35rem .6rem; text-align: left; vertical-align: top; }
+  th { background: rgba(140,140,140,.15); }
+  .kv td:first-child { width: 30%; white-space: nowrap; font-weight: 600; }
+  code { background: rgba(140,140,140,.15); padding: 0 .3rem; border-radius: 4px; }
+  .blockquote { border-left: 3px solid #888; margin: .8rem 0; padding: 1rem 1rem .2rem; background: rgba(140,140,140,.08); border-radius: 0 8px 8px 0; }
+  .tag { display: inline-block; padding: .1rem .5rem; border-radius: 20px; font-size: .8rem; margin-right: .3rem; }
+  .p-hi { background: #c0392b22; color: #c0392b; border: 1px solid #c0392b55; }
+  .p-none { background: #2e7d3222; color: #2e7d32; border: 1px solid #2e7d3255; }
+  .muted { color: #888; }
+  .meta { font-size: .85rem; }
+  .note { background: #f1c40f22; border-left: 3px solid #f1c40f; padding: .6rem 1rem; border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: .88rem; }
+</style>
+</head>
+<body>
+
+<h1>Заявка #113524 — «не работает api китайских каталогов»</h1>
+<p class="meta">Аналитическая карточка для передачи в отдел разработчиков · собрано 09.09.2026</p>
+
+<h2>1. Описание инцидента (со слов клиента)</h2>
+<div class="blockquote">
+<p><strong>«Не работает API китайских каталогов»</strong></p>
+<p>Проект: <strong>[3917] tsk-market.kz | TRUCK SERVICE KAZAKHSTAN, ТОО</strong>, заявка №113524 от 07.09.2026.</p>
+<p>После обновления/переустановки перестал работать API китайских каталогов. Каталог либо не открывается, либо по запросам приходят ошибки — конкретно видно на GET-запросах, которые клиент проверил и приложил к заявке файлом.</p>
+<p>По этим ссылкам результаты либо пустые, либо возвращается ошибка от сервера. Раньше работало, сейчас не работает. Просим разобраться, что изменилось, и вернуть работоспособность.</p>
+<p>Отдаём файл с GET-запросами — надеемся, по нему сервис/разработка смогут определить причину.</p>
+</div>
+
+<h2>2. Карточка клиента / проекта</h2>
+<table class="kv">
+  <tr><td>Клиент</td><td>[3917] tsk-market.kz | TRUCK SERVICE KAZAKHSTAN, ТОО (компания ID 633, контакт 8468)</td></tr>
+  <tr><td>E-mail</td><td>gavrilov_sergey@tsk.com.kz, gn0mkz@gmail.com</td></tr>
+  <tr><td>Логин на сайте</td><td>cbcsever</td></tr>
+  <tr><td>Основной домен</td><td>tsk-market.kz (доп.: cbc-sever.kz, www.tsk-market.kz, cbcsever.auto-vision.ru, tsk-market.auto-vision.ru)</td></tr>
+  <tr><td>Сервер</td><td>kz1</td></tr>
+  <tr><td>Платформа</td><td>ВВ АИ 2.0, v6.72.159 | «Комбо лидер» Parts.Resource и Parts.Intellect</td></tr>
+  <tr><td>Серийный номер АИ</td><td>FV-MRS6CX-8Q54QD-AWJAPP-2LGXAM</td></tr>
+  <tr><td>Приоритет</td><td>Высокий (2)</td></tr>
+  <tr><td>Класс сложности</td><td>Без доработок</td></tr>
+  <tr><td>Менеджер</td><td>Благорожева Мария</td></tr>
+</table>
+
+<h2>3. Передача в отдел разработчиков</h2>
+<div class="blockquote">
+<p><strong>Заявка #113524 — «не работает api китайских каталогов»</strong></p>
+<p><strong>Суть (со слов клиента):</strong> перестал работать API китайских каталогов. Клиент приложил к заявке файл с GET-запросами, по которым видит ошибки/пустые ответы, и просит передать его разработке. Контекст клиента — интеграция через API Parts-Catalogs (PC).</p>
+<p><strong>Передаваемый файл:</strong> поле <code>UF_CRM_634D5C590B487</code>, fileId <strong>1914463</strong>, downloadUrl: <code>/bitrix/components/bitrix/crm.deal.show/show_file.php?ownerId=113524&amp;fieldName=UF_CRM_634D5C590B487&amp;dynamic=Y&amp;fileId=1914463</code> (скачивание требует авторизованной B24-сессии).</p>
+<p><strong>Прошу разработку:</strong></p>
+<ol>
+  <li>Выгрузить вложение fileId <strong>1914463</strong> из поля <code>UF_CRM_634D5C590B487</code> сделки 113524.</li>
+  <li>Пройтись по GET-запросам из файла и проверить поведение API PC: коды ответов, корректность лимитов/токена (TWS-ключ / <code>AuthorizationToken</code>), доступность с сервера <strong>kz1</strong>, возможные изменения в версиях/лимитах API.</li>
+  <li>Сравнить со смежными обращениями этого клиента по API: <strong>112366</strong> (история заказов), <strong>106718</strong> (ошибка <code>MakeOrderService::makeOrder()</code> в <code>BasketController.php</code>), <strong>33162</strong> (<code>invalid_token</code> при REST-интеграции) — не связана ли проблема с общим доступом/креденшелами клиента.</li>
+  <li>Сообщить: это системная проблема API PC, ограничение (лимиты/бан по IP с kz1) либо проблема конфигурации на стороне клиента.</li>
+</ol>
+<p><strong>Результат клиенту:</strong> ожидает возврат работоспособности API китайских каталогов либо конкретное указание, что нужно исправить на его стороне.</p>
+</div>
+
+<h2>4. Исходные данные и контекст</h2>
+<table>
+  <tr><th>Параметр</th><th>Значение</th></tr>
+  <tr><td>Дата создания</td><td>2026-09-07T17:13:06+03:00</td></tr>
+  <tr><td>Текст клиента (COMMENTS)</td><td>«Не работает API китайских каталогов (во вложении файл с get запросами, отдать сервисам)»</td></tr>
+  <tr><td>Активности</td><td>Только автоответ «Ваша заявка принята...» (activity 931450, EMAIL_COMPRESSED, исходящее, 17:15 МСК)</td></tr>
+  <tr><td>Смежные заявки по API</td><td>112366, 106718, 33162 (история в локальной БД)</td></tr>
+  <tr><td>Вложение</td><td><span class="tag p-hi">Не скачано</span> — требуется авторизованная B24-сессия (REST-метода нет, webhook-токен как auth не проходит, куки браузера отсутствуют)</td></tr>
+</table>
+
+<h2>5. Справочник по API PC: <code>/schemas</code> vs <code>/groups-tree</code></h2>
+<p>Оба эндпоинта — навигация по каталогу (тег <code>Groups tree</code>), сами детали — только через <code>/parts2</code>. Для грузовых каталогов использовать <code>groups2</code>/<code>parts2</code>, а не дерево групп.</p>
+<table>
+  <tr><th></th><th><code>/catalogs/{catalogId}/schemas</code></th><th><code>/catalogs/{catalogId}/groups-tree</code></th></tr>
+  <tr><td><strong>Назначение</strong></td><td>Плоские иллюстрации-схемы узлов → страницы деталей</td><td>Полное вложенное дерево групп (категорий)</td></tr>
+  <tr><td><strong>Форма ответа</strong></td><td>Список с пагинацией (≤24/стр.) + <code>X-Total-Count</code></td><td>Рекурсивное дерево целиком (<code>subGroups[]</code>)</td></tr>
+  <tr><td><strong>carId</strong></td><td><span class="tag p-hi">Обязателен</span></td><td>Опционален</td></tr>
+  <tr><td><strong>Фильтры</strong></td><td><code>branchId</code>, <code>partNameIds</code>, <code>partName</code>, <code>page</code></td><td><code>criteria</code>, <code>cached</code></td></tr>
+  <tr><td><strong>Кэш</strong></td><td>—</td><td>Флаг <code>cached</code></td></tr>
+  <tr><td><strong>Элементы ответа</strong></td><td><code>Schema{groupId, img, name, description, partNames[]}</code></td><td><code>{id, name, parentId, subGroups[]}</code></td></tr>
+  <tr><td><strong>Роль</strong></td><td>Выбор картинки узла для показа позиций/деталей</td><td>Навигация по группам (без деталей)</td></tr>
+</table>
+
+<h2>6. Результат практической проверки API PC (09.09.2026)</h2>
+<table>
+  <tr><th>Запрос</th><th>Результат</th></tr>
+  <tr><td><code>GET /ip</code> (без ключа)</td><td><span class="tag p-none">200</span> <code>{"ip":"2.27.27.160"}</code></td></tr>
+  <tr><td><code>GET /catalogs</code>, заголовок <code>ApiKey</code></td><td><span class="tag p-hi">401</span> <code>Unauthorized</code> — неверный заголовок авторизации</td></tr>
+  <tr><td><code>GET /catalogs</code>, заголовок <code>Authorization: &lt;ключ&gt;</code></td><td><span class="tag p-hi">403</span> <code>{"code":403,"errorCode":1003,"message":"IP 2.27.27.160 not allowed"}</code></td></tr>
+</table>
+<p>Авторизация API PC — заголовок <code>Authorization: &lt;ключ&gt;</code> (в спецификации <code>securitySchemes.ApiKey = name: Authorization</code>), а не <code>ApiKey</code>. Ключ привязан к белому списку IP, текущий адрес 2.27.27.160 в него не входит.</p>
+<p><strong>Возможные причины «не работает API китайских каталогов» у tsk-market.kz:</strong></p>
+<ul>
+  <li><span class="tag p-hi">403</span> — сервер <strong>kz1</strong> (или боевой IP клиента) не в allow-list ключа / IP сменился;</li>
+  <li><span class="tag p-hi">401</span> — неверный формат ключа (заголовок <code>ApiKey</code> вместо <code>Authorization</code>, неверный/истёкший TWS-ключ);</li>
+  <li><span class="tag p-hi">400/422</span> — некорректные <code>carId</code>/<code>groupId</code>/<code>branchId</code> в запросах из вложения;</li>
+  <li>лимиты/изменение версии API (v1.18.0).</li>
+</ul>
+
+<div class="note">
+<strong>Примечание:</strong> содержимое вложения (GET-запросы клиента) на момент подготовки карточки не прочитано — раздел 6 дополнить реальными URL и кодами ответов, прогнав их с IP, разрешённого для ключа. Рекомендуется получить доступ к файлу (сессия B24, fileId 1914463) до финализации карточки.
+</div>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+N=96
+/knowledge/techsupservice/ ## База знаний ТП
+https://b24.tradesoft.ru/knowledge/techsupservice/ ## База знаний Службы поддержки клиентов
+https://b24.tradesoft.ru/knowledge/techsupservice/autoinstaller_mssql_server/ ## Установка MSSQL Server'a клиентам
+https://b24.tradesoft.ru/knowledge/techsupservice/keysy/ ## Кейсы
+https://b24.tradesoft.ru/knowledge/techsupservice/exportTo1C/ ## Интеграция PI и 1С
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornepomenyalsyastatuspozitsiizakazanasayte/ ## Не поменялся статус позиции заказа на сайте
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruziliskakietopozitsiivprayspostavshchikaprietomvaioniestiprotsenivayutsya/ ## Не выгрузились какие-то позиции в прайспоставщика, при этом в АИ они есть и процениваются
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatorpereprotsenkapozitsiy/ ## перепроценка позиций
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatoroshibkapriinitsializatsiineudaloszagruzitkheshiparoleyizvebvkhoda/ ## Ошибка при инициализации: Не удалось загрузить хэши паролей из Веб-входа
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornerabotaetsinkhronizatsiya/ ## не работает синхронизация
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruzhaetsyaprayspostavshchikanasayt/ ## не выгружается прайс поставщика на сайт
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornapartionnoygibkoyskhemenevygruzhayutsyakakietopredlozheniyaiznalichiya/ ## На партионной/гибкой схеме не выгружаются какие-то предложения из наличия
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruzhaetsyanalichieskladovskladbezprivyazkikttizpi/ ## Не выгружается наличие складов (склад без привязки к ТТ) из PI
+https://b24.tradesoft.ru/knowledge/techsupservice/ustarevsheepokompaniitradesoft/ ## устаревшее ПО компании Tradesoft
+https://b24.tradesoft.ru/knowledge/techsupservice/catcaraftermarket/ ## Catcar Aftermarket
+https://b24.tradesoft.ru/knowledge/techsupservice/massovayaprotsenkaanalizprayslistovpartsintellect/ ## Массовая проценка (Анализ прайс-листов) Parts.Intellect
+https://b24.tradesoft.ru/knowledge/techsupservice/dezhurstvana1i2linii/ ## Дежурства на 1 и 2 линии
+https://b24.tradesoft.ru/knowledge/techsupservice/china-catalogs/ ## Китайские каталоги
+https://b24.tradesoft.ru/knowledge/techsupservice/shablonyobrashcheniynaotkrytyelinii/ ## Шаблоны обращений на открытые линии
+https://b24.tradesoft.ru/knowledge/techsupservice/FTP_for_clients/ ## Создание FTP аккаунтов для проектов клиентов
+https://b24.tradesoft.ru/knowledge/techsupservice/analiz_nedostupnosti_spiska_web_postavshchikov/ ## Анализ ситуации при недоступности списка веб-поставщиков
+https://b24.tradesoft.ru/knowledge/techsupservice/setting_network_receipts_printing_service/ ## Настройка ССПЧ Parts.Intellect при работе через RDP
+https://b24.tradesoft.ru/knowledge/techsupservice/zapusksistemnykhinstrumentovwindows/ ## Запуск системных инструментов windows.
+https://b24.tradesoft.ru/knowledge/techsupservice/instruction_for_LS_PartsIntellect/ ## Инструкция по сбору логов для СЛ Parts.Intellect
+https://b24.tradesoft.ru/knowledge/techsupservice/rabotaslogamislpartsintellect/ ## работа с логами СЛ Parts.Intellect
+https://b24.tradesoft.ru/knowledge/techsupservice/spisokvebpostavshchikovnedostupen/ ## Список веб-поставщиков недоступен
+https://b24.tradesoft.ru/knowledge/techsupservice/markirovka_tovara/ ## Работа с маркированным товаром в 2025м
+https://b24.tradesoft.ru/knowledge/techsupservice/rabotasmarkirovannymtovaromv2025m/ ## Работа с маркированным товаром в 2025м
+https://b24.tradesoft.ru/knowledge/techsupservice/balansy_parts_intellect/ ## Балансы Parts.Intellect. Регламент. Шаблоны.
+https://b24.tradesoft.ru/knowledge/techsupservice/inostrannyeproekty/ ## Иностранные проекты
+https://b24.tradesoft.ru/knowledge/techsupservice/vebprotsenka/ ## Веб-проценка
+https://b24.tradesoft.ru/knowledge/techsupservice/apipc_euye/ ## Api PC
+https://b24.tradesoft.ru/knowledge/techsupservice/partscatalogs/ ## Parts.Catalogs
+https://b24.tradesoft.ru/knowledge/techsupservice/apipc/ ## Api PC
+https://b24.tradesoft.ru/knowledge/techsupservice/smenatikov/ ## Смена тиков при несоответствии
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizator/ ## Синхронизатор
+https://b24.tradesoft.ru/knowledge/techsupservice/dobavlenieotvetovvwikibot/ ## Добавление ответов в wikibot
+https://b24.tradesoft.ru/knowledge/techsupservice/konverttsiyabdpartsintellect/ ## Конвертция БД Parts.Intellect
+https://b24.tradesoft.ru/knowledge/techsupservice/ssylkinadokumentatsiyu/ ## Ссылки на документацию
+https://b24.tradesoft.ru/knowledge/techsupservice/restore_from_backup_mssql/ ## Разворачивание бд MS SQL
+https://b24.tradesoft.ru/knowledge/techsupservice/razvorachivaniebdmssql/ ## Разворачивание бд MS SQL
+https://b24.tradesoft.ru/knowledge/techsupservice/mssqlrazvorachivaniebd/ ## MS SQL разворачивание бд
+https://b24.tradesoft.ru/knowledge/techsupservice/realizatsiyavebpostavshchikov/ ## Реализация Веб-поставщиков
+https://b24.tradesoft.ru/knowledge/techsupservice/vosstanovleniebdsqlposleudaleniyafaylalog/ ## восстановление бд sql после удаления файла .log
+https://b24.tradesoft.ru/knowledge/techsupservice/nevypolnyaetsyavkhodvbd/ ## Внутренняя ошибка № 31. Не выполняется вход в бд.
+https://b24.tradesoft.ru/knowledge/techsupservice/rezhimypoiska/ ## Режимы поиска
+https://b24.tradesoft.ru/knowledge/techsupservice/rezultatypoiska_qkuh/ ## Результаты поиска
+https://b24.tradesoft.ru/knowledge/techsupservice/stranitsastati_uxvx/ ## Страница статьи
+https://b24.tradesoft.ru/knowledge/techsupservice/ispravleniebalansovvai/ ## Исправление балансов в АИ
+https://b24.tradesoft.ru/knowledge/techsupservice/restore_from_backup_pgsql/ ## PG SQL разворачивание бд
+https://b24.tradesoft.ru/knowledge/techsupservice/identify_user_ip/ ## Выявление ip пользователя
+https://b24.tradesoft.ru/knowledge/techsupservice/vyyavlenieippolzovatelya/ ## Выявление ip пользователя
+https://b24.tradesoft.ru/knowledge/techsupservice/statyaporazdelustatistikaprotsenok/ ## Статья по разделу Статистика проценок
+https://b24.tradesoft.ru/knowledge/techsupservice/rabotavb24/ ## Работа в Б24
+https://b24.tradesoft.ru/knowledge/techsupservice/calls_chats/ ## Регламент по звонкам и чатам
+https://b24.tradesoft.ru/knowledge/techsupservice/skhemaobmenaplatezhamiprisinkhronizatore/ ## Схема обмена платежами при Синхронизаторе
+https://b24.tradesoft.ru/knowledge/techsupservice/uchyettovaroviuslug/ ## Учёт товаров и услуг. Экспорт/Импорт данных.
+https://b24.tradesoft.ru/knowledge/techsupservice/stolzakazovavtozapchastey/ ## Стол заказов автозапчастей. Экспорт/Импорт данных
+https://b24.tradesoft.ru/knowledge/techsupservice/ustarevsheepo/ ## Устаревшее ПО
+https://b24.tradesoft.ru/knowledge/techsupservice/reglamentUstanovkiPotentsialuObnovlenieBezTpAi/ ## Установка потенциалу/Обновление без ТП АИ
+https://b24.tradesoft.ru/knowledge/techsupservice/reglamenttelegram/ ## Регламент Telegram
+https://b24.tradesoft.ru/knowledge/techsupservice/obnovlenie_Parts.Intellect/ ## Обновление Parts.Intellect
+https://b24.tradesoft.ru/knowledge/techsupservice/tsenoobrazovaniedilerovipokupateleydilerov/ ## Ценообразование дилеров и покупателей дилеров
+https://b24.tradesoft.ru/knowledge/techsupservice/sla/ ## SLA
+https://b24.tradesoft.ru/knowledge/techsupservice/grafikdezhurstv/ ## График дежурств
+https://b24.tradesoft.ru/knowledge/techsupservice/vopros_otvet_pr/ ## Вопрос-ответ
+https://b24.tradesoft.ru/knowledge/techsupservice/nastroykagittortoisegit/ ## Настройка Git+TortoiseGit
+https://b24.tradesoft.ru/knowledge/techsupservice/Parts.Index_сatalogs/ ## PI каталоги
+https://b24.tradesoft.ru/knowledge/techsupservice/setevayadiagnostika/ ## Сетевая диагностика
+https://b24.tradesoft.ru/knowledge/techsupservice/obrabotkazayavokvar/ ## Обработка заявок ВАР
+https://b24.tradesoft.ru/knowledge/techsupservice/rabotasflashpaste/ ## Работа с Flashpaste
+https://b24.tradesoft.ru/knowledge/techsupservice/testirovanieisostavlenieprimechaniydlyaperedachinavebotdelvar/ ## Тестирование и составление примечаний для передачи на веб-отдел (ВАР)
+https://b24.tradesoft.ru/knowledge/techsupservice/testirovanieisostavlenieprimechaniydlyaperedachinaotdelvebservisov/ ## Тестирование и составление примечаний для передачи на отдел веб-сервисов
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizator_njqm/ ## Синхронизатор
+https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizator_mtdi/ ## Синхронизатор
+https://b24.tradesoft.ru/knowledge/techsupservice/aiproblemareshenie/ ## АИ: Проблема-Решение
+https://b24.tradesoft.ru/knowledge/techsupservice/pravilaobsluzhivaniyavar/ ## Правила обслуживания Parts.Resource
+https://b24.tradesoft.ru/knowledge/techsupservice/kogosprosit/ ## Полезные ссылки
+https://b24.tradesoft.ru/knowledge/techsupservice/sostavlenieprimechaniytormozheniya/ ## Составление примечаний: торможения
+https://b24.tradesoft.ru/knowledge/techsupservice/sostavleniyaprimechaniydiadok/ ## Составления примечаний: Диадок
+https://b24.tradesoft.ru/knowledge/techsupservice/projectsiservicemanager/ ## Projects и Service manager
+https://b24.tradesoft.ru/knowledge/techsupservice/rabotasprojects/ ## Работа с projects
+https://b24.tradesoft.ru/knowledge/techsupservice/shemaai/ ## Схема AutoИнтеллект
+https://b24.tradesoft.ru/knowledge/techsupservice/blokskhema/ ## Анализ скорости проценки
+https://b24.tradesoft.ru/knowledge/techsupservice/autointellektatolshtrikhmosobennostiraboty/ ## AutoИнтеллект:Атол, Штрих-М особенности работы
+https://b24.tradesoft.ru/knowledge/techsupservice/kkt/ ## ККТ
+https://b24.tradesoft.ru/knowledge/techsupservice/analizmedlennoyrabotysayta/ ## Анализ медленной работы сайта
+https://b24.tradesoft.ru/knowledge/techsupservice/ustanovkainastroykapodklyucheniyakbdvar/ ## Установка и настройка подключения к БД ВАР
+https://b24.tradesoft.ru/knowledge/techsupservice/nastroykapochtovogodomena/ ## Настройка почтового домена
+https://b24.tradesoft.ru/knowledge/techsupservice/ftp/ ## FTP
+https://b24.tradesoft.ru/knowledge/techsupservice/kommit/ ## Коммит
+https://b24.tradesoft.ru/knowledge/techsupservice/kommity/ ## Коммиты
+https://b24.tradesoft.ru/knowledge/techsupservice/stranitsastati/ ## Страница статьи
+https://b24.tradesoft.ru/knowledge/techsupservice/stranitsakategorii/ ## Страница категории
+https://b24.tradesoft.ru/knowledge/techsupservice/saydbar/ ## Сайдбар
+https://b24.tradesoft.ru/knowledge/techsupservice/rezultatypoiska/ ## Результаты поиска

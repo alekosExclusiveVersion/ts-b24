@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Parts-Catalogs: /schemas vs /groups-tree — разбор</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; line-height: 1.5; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.3rem; border-bottom: 2px solid #7a7a; padding-bottom: .4rem; }
+  h2 { font-size: 1.05rem; margin-top: 2rem; }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { border: 1px solid #999; padding: .4rem .55rem; text-align: left; vertical-align: top; }
+  th { background: rgba(140,140,140,.15); }
+  code { background: rgba(140,140,140,.15); padding: 0 .3rem; border-radius: 4px; }
+  pre { background: rgba(140,140,140,.08); border-left: 3px solid #888; padding: .8rem 1rem; border-radius: 0 8px 8px 0; overflow-x: auto; font-size: .85rem; }
+  .tag { display: inline-block; padding: .1rem .5rem; border-radius: 20px; font-size: .8rem; }
+  .ok { background: #2e7d3222; color: #2e7d32; border: 1px solid #2e7d3255; }
+  .err { background: #c0392b22; color: #c0392b; border: 1px solid #c0392b55; }
+  .warn { background: #f1c40f22; color: #b09a00; border: 1px solid #f1c40f55; }
+  .note { background: #f1c40f22; border-left: 3px solid #f1c40f; padding: .6rem 1rem; border-radius: 0 8px 8px 0; margin-top: 1rem; font-size: .88rem; }
+  .muted { color: #888; }
+  .meta { font-size: .85rem; }
+</style>
+</head>
+<body>
+
+<h1>API Parts-Catalogs (PC): чем отличается <code>/schemas</code> от <code>/groups-tree</code></h1>
+<p class="meta">Источник: официальная OpenAPI-спецификация <code>https://api.parts-catalogs.com/v1</code> (Catalogs API v1.18.0) + практическая проверка. Дата: 09.09.2026.</p>
+<p>Контекст: заявка <strong>#113524</strong> — «не работает API китайских каталогов» (клиент [3917] tsk-market.kz, сервер kz1, АИ 2.0 v6.72.159). Ниже — детальный разбор двух GET-эндпоинтов и план проверки причины.</p>
+
+<h2>1. Общее</h2>
+<p>Оба эндпоинта находятся в теге <code>Groups tree</code> и отвечают на «навигацию по каталогу», но решают разные задачи. Детали (список позиций на схеме с координатами) получаются через <code>GET /catalogs/{catalogId}/parts2</code>.</p>
+
+<h2>2. <code>GET /catalogs/{catalogId}/schemas</code></h2>
+<p><strong>operationId:</strong> <code>Get schemas</code> — «Get schemas that lead to detail pages» (схемы, ведущие к страницам деталей).</p>
+<table>
+  <tr><th>Параметр</th><th>Тип</th><th>Обязательный</th><th>Описание</th></tr>
+  <tr><td><code>catalogId</code></td><td>path</td><td>да</td><td>ID каталога (toyota, bmw, …)</td></tr>
+  <tr><td><code>carId</code></td><td>query</td><td><span class="tag err">да</span></td><td>ID автомобиля</td></tr>
+  <tr><td><code>branchId</code></td><td>query</td><td>нет</td><td>Фильтр по ветке (= id группы)</td></tr>
+  <tr><td><code>criteria</code></td><td>query</td><td>нет</td><td>Строка фильтра (из <code>/car/info</code>)</td></tr>
+  <tr><td><code>page</code></td><td>query</td><td>нет</td><td>Номер страницы; <strong>максимум 24 элемента на ответ</strong> (default 0)</td></tr>
+  <tr><td><code>partNameIds</code></td><td>query</td><td>нет</td><td>ID имён деталей для фильтра (пример <code>56,85</code>)</td></tr>
+  <tr><td><code>partName</code></td><td>query</td><td>нет</td><td>Имя детали для фильтра (пример «Air filter»)</td></tr>
+</table>
+<p><strong>Ответ 200:</strong> <code>SchemasResponse { group: Group|null, list: Schema[] }</code>, заголовок <code>X-Total-Count</code> — общее число доступных.</p>
+<pre>Schema {
+  groupId:     string            // id группы
+  img:         string|null       // картинка схемы, напр. //img.parts-catalogs.com/toyota_2022_12/usa/84E429B.png
+  name:        string            // "ENGINE &amp; TRANSMISSION ILLUST NO. 1 OF 7"
+  description: string|null
+  partNames:   [{ id, name }]    // имена деталей схемы
+}</pre>
+<p><strong>Назначение:</strong> плоский список «чертежей» узлов (тойотовский тип иллюстраций) с пагинацией и фильтрами; каждый элемент — вход в страницу деталей.</p>
+
+<h2>3. <code>GET /catalogs/{catalogId}/groups-tree</code></h2>
+<p><strong>operationId:</strong> <code>Get groups tree</code> — «Get groups tree».</p>
+<table>
+  <tr><th>Параметр</th><th>Тип</th><th>Обязательный</th><th>Описание</th></tr>
+  <tr><td><code>catalogId</code></td><td>path</td><td>да</td><td>ID каталога</td></tr>
+  <tr><td><code>carId</code></td><td>query</td><td><span class="tag">нет</span></td><td>ID автомобиля (опционально)</td></tr>
+  <tr><td><code>criteria</code></td><td>query</td><td>нет</td><td>Строка фильтра</td></tr>
+  <tr><td><code>cached</code></td><td>query bool</td><td>нет</td><td><code>true</code> — общее нефильтрованное дерево из кэша; иначе фильтрованное дерево с повышенной задержкой</td></tr>
+</table>
+<p><strong>Ответ 200:</strong> <code>Array&lt;GroupsTreeResponse&gt;</code> — рекурсивное дерево всей структуры групп:</p>
+<pre>GroupsTreeResponse / GroupsTree {
+  id:        string|null  // id группы
+  name:      string
+  parentId:  string|null
+  subGroups: [GroupsTree] // вложенные подгруппы
+}</pre>
+<p><strong>Назначение:</strong> полное вложенное дерево групп (категорий) за один запрос, без пагинации; дальнейшая навигация выполняется локально по <code>subGroups</code>.</p>
+
+<h2>4. Сравнительная таблица</h2>
+<table>
+  <tr><th></th><th><code>/schemas</code></th><th><code>/groups-tree</code></th></tr>
+  <tr><td><strong>Что отдаёт</strong></td><td>Плоские иллюстрации-схемы узлов → страницы деталей</td><td>Полное вложенное дерево групп (категорий)</td></tr>
+  <tr><td><strong>Форма ответа</strong></td><td>Список с пагинацией (≤24/стр.) + <code>X-Total-Count</code></td><td>Рекурсивное дерево целиком</td></tr>
+  <tr><td><strong>carId</strong></td><td>Обязателен</td><td>Опционален</td></tr>
+  <tr><td><strong>Фильтры</strong></td><td><code>branchId</code>, <code>partNameIds</code>, <code>partName</code>, <code>page</code></td><td><code>criteria</code>, <code>cached</code></td></tr>
+  <tr><td><strong>Кэш</strong></td><td>—</td><td>Флаг <code>cached</code></td></tr>
+  <tr><td><strong>Роль</strong></td><td>Выбор картинки узла для показа позиций/деталей</td><td>Навигация по группам (без деталей)</td></tr>
+</table>
+<p>Общее: оба — «поиск пути к деталям», оба не содержат самих деталей; детали и полная иллюстрация с координатами — только через <code>/parts2</code>. Для <strong>грузовых каталогов</strong> в спецификации предупреждение: <em>«Attention! You must use the groups2 and parts2 methods for truck catalogs»</em> — дерево групп для грузовиков не использовать.</p>
+
+<h2>5. Практическая проверка (09.09.2026)</h2>
+<table>
+  <tr><th>Запрос</th><th>Результат</th></tr>
+  <tr><td><code>GET /ip</code> (без ключа)</td><td><span class="tag ok">200</span> <code>{"ip":"2.27.27.160"}</code></td></tr>
+  <tr><td><code>GET /catalogs</code> c заголовком <code>ApiKey</code></td><td><span class="tag err">401</span> <code>"Unauthorized"</code> — неверный заголовок авторизации</td></tr>
+  <tr><td><code>GET /catalogs</code> c заголовком <code>Authorization: &lt;ключ&gt;</code></td><td><span class="tag err">403</span> <code>{"code":403,"errorCode":1003,"message":"IP 2.27.27.160 not allowed"}</code></td></tr>
+</table>
+<p class="note"><strong>Вывод из практики:</strong> ключ PC (TWS-…) принимается только через заголовок <strong><code>Authorization</code></strong> (в спецификации <code>securitySchemes.ApiKey = name: Authorization</code>), а не через заголовок <code>ApiKey</code>. Ключ привязан к белому списку IP — текущий адрес 2.27.27.160 в него не входит, поэтому данные не отданы.</p>
+
+<h2>6. Связь с инцидентом #113524</h2>
+<p>Для проверки причины «не работает API китайских каталогов» у tsk-market.kz необходимо:</p>
+<ol>
+  <li>Определить, каким эндпоинтом пользуется интеграция: <code>/groups-tree</code> (навигация по группам) либо <code>/schemas</code> (иллюстрации узлов) — по GET-запросам клиента из вложения (fileId 1914463).</li>
+  <li>Проверить ответ API PC: возможные сценарии:
+    <ul>
+      <li><span class="tag err">403 IP not allowed</span> — сервер kz1 (или боевой IP клиента) не в allow-list ключа / IP сменился;</li>
+      <li><span class="tag err">401</span> — неверный формат ключа (передача в заголовке <code>ApiKey</code> вместо <code>Authorization</code>, либо неверный/истёкший TWS-ключ);</li>
+      <li><span class="tag err">400/422</span> — некорректный <code>carId</code>/<code>groupId</code>/<code>branchId</code> в запросе;</li>
+      <li><span class="tag">—</span> лимиты/изменение версии API (v1.18.0).</li>
+    </ul>
+  </li>
+  <li>Прогнать реальные GET-запросы из вложения клиента с IP, разрешённого для ключа.</li>
+</ol>
+
+<h2>7. Соответствие эндпоинтов визуальной части (проверено по фронтенду)</h2>
+<p>Виджет каталога на сайте клиента (пример: <code>http://test-ar6.auto-vision.ru/cats/#/catalogs?catalogId=audi</code>) подключает <code>https://ru.gui.parts-catalogs.com/v3/parts-catalogs.js</code> → модуль <code>connect-catalogs_*.js</code> → <code>bundle_cd5b3708.js</code> (обычный) или <code>bundle-ai.js</code> (UA <code>AI ...</code>). Разбор кода бандлов показывает реальные вызовы API:</p>
+<table>
+  <tr><th>Экран/блок визуальной части</th><th>Вызываемый эндпоинт</th><th>Параметры</th></tr>
+  <tr><td>Выбор каталога, модели, авто</td><td><code>GET /catalogs/</code>, <code>/catalogs/{id}/models/</code>, <code>/cars2</code></td><td>—</td></tr>
+  <tr><td>Список групп (навигация по уровням)</td><td><code>GET /catalogs/{id}/groups2/</code><br>заголовок <code>X-Redirect-Template</code> → ссылки <code>#/schemas?...&amp;branchId=%groupId%</code> и <code>#/parts?...&amp;groupId=%groupId%</code></td><td><code>carId</code>, <code>groupId</code>, <code>criteria</code></td></tr>
+  <tr><td>Дерево групп в сайдбаре/панели</td><td><code>GET /catalogs/{id}/groups-tree/</code> — всегда с <code>cached:1</code> (кэшированное нефильтрованное дерево)</td><td><code>carId</code>, <code>criteria</code>, <code>cached:1</code></td></tr>
+  <tr><td>Страница схем (иллюстраций узлов) <code>#/schemas</code></td><td><code>GET /catalogs/{id}/schemas</code></td><td><code>carId</code> (обяз.), <code>branchId</code>, <code>page</code></td></tr>
+  <tr><td>Страница позиций/деталей <code>#/parts</code></td><td><code>GET /catalogs/{id}/parts2</code></td><td><code>carId</code>, <code>groupId</code></td></tr>
+</table>
+<p><strong>Наблюдения из кода виджета:</strong></p>
+<ul>
+  <li>Флаг <code>cached</code> фронт выставляет через обёртку <code>ha(e){return{...e,cached:1}}</code> — дерево всегда берётся из кэша (spec: «general unfiltered group tree from cache»), а не «filtered tree with increased latency».</li>
+  <li>Getter <code>groupsTreeAvailable</code> берётся из флага модели (<code>t.groupsTreeAvailable</code>) — дерево доступно не для всех каталогов; при недоступности обращение остаётся к <code>groups2</code>.</li>
+  <li><code>/schemas</code> — отдельный экран-сетка картинок узлов с переходом на детали (<code>#/parts</code>) — ровно как в спецификации «Get schemas that lead to detail pages».</li>
+  <li>Значит для неработоспособности «китайских каталогов» виджет вызывает либо <code>groups2</code>+<code>groups-tree</code> (навигация), либо <code>schemas</code>+<code>parts2</code> (выбор узла/детали) — по каким именно из них сыпется, покажет содержимое вложения (GET-запросы клиента).</li>
+</ul>
+
+<h2>8. Практическое сравнение на реальных данных (09.09.2026, ключ работает)</h2>
+<p>Ключ PC успешно сработал с офисного IP <code>92.255.230.89</code> (direct-выход Karing, заголовок <code>Authorization</code>) — <code>GET /catalogs</code> вернул 200 с полным списком каталогов. Ниже — сравнение на каталоге <code>audi</code> (carId <code>7471c924831933dd0a30544846bca1f4</code>, из <code>/cars2</code>).</p>
+<table>
+  <tr><th></th><th><code>GET /catalogs/audi/groups-tree</code></th><th><code>GET /catalogs/audi/schemas</code></th></tr>
+  <tr><td><strong>HTTP</strong></td><td>200</td><td>200, заголовок <code>X-Total-Count: 233</code></td></tr>
+  <tr><td><strong>Объём</strong></td><td>~128 КБ</td><td>~27 КБ (стр.)</td></tr>
+  <tr><td><strong>Корневых узлов</strong></td><td>20 («Аксессуары», «ГСМ», «Детали ТО», «Двигатель», «Выпуск ОГ», «Охлаждение ДВС»...)</td><td>24 схемы на странице из 233</td></tr>
+  <tr><td><strong>Вложенность</strong></td><td>до 3+ уровней (<code>subGroups[]</code>)</td><td>плоский список</td></tr>
+  <tr><td><strong>Содержимое узлов</strong></td><td>только <code>id,name,parentId,subGroups[]</code></td><td><code>groupId,name,img,description,partNames[]</code></td></tr>
+  <tr><td><strong>Фактический результат</strong></td><td>«Двигатель → Блок цилиндров, картер → Блок ДВС → Блок цилиндров с поршнями»</td><td>«Блок цилиндров с поршнями 1», «Масляный насос 1», «Масляный фильтр» с <code>img</code> и <code>partNames</code></td></tr>
+</table>
+<p><strong>Вывод:</strong> <code>groups-tree</code> — каталог групп (дерево категорий), <code>schemas</code> — иллюстрации узлов с деталями (с пагинацией по 24, всего 233 по auto). Для <code>schemas</code> с <code>branchId</code> возвращается и ветка (<code>group</code>). Для диагностики заявки <code>#113524</code> достаточно прогнать GET-запросы клиента из вложения (fileId 1914463) через direct-выход с IP <code>92.255.230.89</code>: код ответа покажет, что именно ломается (403 allow-list / 401 ключ / 400 параметры).</p>
+
+<div class="note">
+<strong>Статус:</strong> содержимое вложения заявки пока не прочитано (требуется авторизованная B24-сессия). Ключ и безопасность: значение ключа в этом документе не раскрывается и в историю не выводится.
+</div>
+
+</body>
+</html>

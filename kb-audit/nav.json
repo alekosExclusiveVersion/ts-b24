@@ -1,0 +1,434 @@
+[
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "rabotavb24",
+  "title": "Работа в Б24",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/rabotavb24/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "rabotasprojects",
+  "title": "Работа с projects",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/rabotasprojects/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "projectsiservicemanager",
+  "title": "Projects и Service manager",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/projectsiservicemanager/?IFRAME=Y?IFRAME=Y#b1789"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "rabotasflashpaste",
+  "title": "Работа с Flashpaste",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/rabotasflashpaste/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "shablonyobrashcheniynaotkrytyelinii",
+  "title": "Шаблоны обращений на открытые линии",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/shablonyobrashcheniynaotkrytyelinii/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "nastroykagittortoisegit",
+  "title": "Настройка Git+TortoiseGit",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/nastroykagittortoisegit/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений",
+  "code": "kommit",
+  "title": "Коммит",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/kommit/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений > Примечания",
+  "code": "sostavlenieprimechaniytormozheniya",
+  "title": "Торможения",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sostavlenieprimechaniytormozheniya/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений > Примечания",
+  "code": "testirovanieisostavlenieprimechaniydlyaperedachinaotdelvebservisov",
+  "title": "Тестирование и составление примечаний для передачи на отдел веб-сервисов",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/testirovanieisostavlenieprimechaniydlyaperedachinaotdelvebservisov/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки > Приём/обработка/мониторинг обращений > Примечания",
+  "code": "testirovanieisostavlenieprimechaniydlyaperedachinavebotdelvar",
+  "title": "Тестирование и составление примечаний для передачи на веб-отдел (ВАР)",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/testirovanieisostavlenieprimechaniydlyaperedachinavebotdelvar/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки",
+  "code": "calls_chats",
+  "title": "Звонки/чаты регламент",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/calls_chats/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки",
+  "code": "kogosprosit",
+  "title": "Полезные ссылки и чаты",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/kogosprosit/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки",
+  "code": "reglamenttelegram",
+  "title": "Регламент Telegram",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/reglamenttelegram/?IFRAME=Y"
+ },
+ {
+  "path": "Ресурсы и регламенты службы поддержки",
+  "code": "FTP_for_clients",
+  "title": "Создание\\изменение FTP аккаунтов для проектов клиентов",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/FTP_for_clients/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Регламент и правила обслуживания",
+  "code": "pravilaobsluzhivaniyavar",
+  "title": "Правила обслуживания Parts.Resource",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/pravilaobsluzhivaniyavar/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Регламент и правила обслуживания",
+  "code": "obrabotkazayavokvar",
+  "title": "Регламент обработки заявок Parts.Resource",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/obrabotkazayavokvar/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Инструкции",
+  "code": "vopros_otvet_pr",
+  "title": "Вопрос-ответ",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/vopros_otvet_pr/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Инструкции",
+  "code": "spisokvebpostavshchikovnedostupen",
+  "title": "Список веб-поставщиков недоступен",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/spisokvebpostavshchikovnedostupen/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Инструкции",
+  "code": "tsenoobrazovaniedilerovipokupateleydilerov",
+  "title": "Ценообразование дилеров и покупателей дилеров",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/tsenoobrazovaniedilerovipokupateleydilerov/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Инструкции",
+  "code": "rezhimypoiska",
+  "title": "Режимы поиска",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/rezhimypoiska/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource > Инструкции",
+  "code": "analiz_nedostupnosti_spiska_web_postavshchikov",
+  "title": "Анализ ситуации при недоступности списка веб-поставщиков",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/analiz_nedostupnosti_spiska_web_postavshchikov/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Resource",
+  "code": "inostrannyeproekty",
+  "title": "Иностранные проекты",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/inostrannyeproekty/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Регламент и правила обслуживания",
+  "code": "shemaai",
+  "title": "Схема Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/shemaai/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Регламент и правила обслуживания",
+  "code": "balansy_parts_intellect",
+  "title": "Балансы Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/balansy_parts_intellect/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Установка\\обновление Parts.Intellect",
+  "code": "reglamentUstanovkiPotentsialuObnovlenieBezTpAi",
+  "title": "Установка Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/reglamentUstanovkiPotentsialuObnovlenieBezTpAi/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Установка\\обновление Parts.Intellect",
+  "code": "obnovlenie_Parts.Intellect",
+  "title": "Обновление на 5х с более ранних версий",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/obnovlenie_Parts.Intellect/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "markirovka_tovara",
+  "title": "Работа с маркированным товаром в 2025м",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/markirovka_tovara/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "autointellektatolshtrikhmosobennostiraboty",
+  "title": "Атол, Штрих-М особенности работы",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/autointellektatolshtrikhmosobennostiraboty/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "sostavleniyaprimechaniydiadok",
+  "title": "Диадок",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sostavleniyaprimechaniydiadok/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "kkt",
+  "title": "ККТ",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/kkt/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции > Восстановление бд",
+  "code": "restore_from_backup_pgsql",
+  "title": "PGSQL",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/restore_from_backup_pgsql/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции > Восстановление бд",
+  "code": "restore_from_backup_mssql",
+  "title": "MSSQL",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/restore_from_backup_mssql/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "konverttsiyabdpartsintellect",
+  "title": "Конвертция БД Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/konverttsiyabdpartsintellect/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "stranitsastati_uxvx",
+  "title": "Профилирование",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/stranitsastati_uxvx/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "instruction_for_LS_PartsIntellect",
+  "title": "Инструкция по сбору логов СЛ Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/instruction_for_LS_PartsIntellect/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "setting_network_receipts_printing_service",
+  "title": "Настройка ССПЧ Parts.Intellect при работе через RDP",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/setting_network_receipts_printing_service/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "massovayaprotsenkaanalizprayslistovpartsintellect",
+  "title": "Массовая проценка (Анализ прайс-листов) Parts.Intellect",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/massovayaprotsenkaanalizprayslistovpartsintellect/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "nevypolnyaetsyavkhodvbd",
+  "title": "Не выполняется вход в бд",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/nevypolnyaetsyavkhodvbd/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "exportTo1C",
+  "title": "Интеграция PI и 1С",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/exportTo1C/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании > Parts.Intellect > Инструкции",
+  "code": "autoinstaller_mssql_server",
+  "title": "Установка MSSQL Server'a клиентам",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/autoinstaller_mssql_server/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizator",
+  "title": "Синхронизатор",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizator/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizator_njqm",
+  "title": "Схема",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizator_njqm/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "skhemaobmenaplatezhamiprisinkhronizatore",
+  "title": "Схема обмена платежами",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/skhemaobmenaplatezhamiprisinkhronizatore/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "smenatikov",
+  "title": "Смена тиков при несоответствии",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/smenatikov/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "keysy",
+  "title": "Кейсы",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/keysy/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornevygruzhaetsyanalichieskladovskladbezprivyazkikttizpi",
+  "title": "Не выгружается наличие складов (склад без привязки к ТТ) из PI",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruzhaetsyanalichieskladovskladbezprivyazkikttizpi/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornapartionnoygibkoyskhemenevygruzhayutsyakakietopredlozheniyaiznalichiya",
+  "title": "На партионной/гибкой схеме не выгружаются какие-то предложения из наличия",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornapartionnoygibkoyskhemenevygruzhayutsyakakietopredlozheniyaiznalichiya/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornevygruzhaetsyaprayspostavshchikanasayt",
+  "title": "не выгружается прайс поставщика на сайт",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruzhaetsyaprayspostavshchikanasayt/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatoroshibkapriinitsializatsiineudaloszagruzitkheshiparoleyizvebvkhoda",
+  "title": "Ошибка при инициализации: Не удалось загрузить хэши паролей из Веб-входа",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatoroshibkapriinitsializatsiineudaloszagruzitkheshiparoleyizvebvkhoda/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornevygruziliskakietopozitsiivprayspostavshchikaprietomvaioniestiprotsenivayutsya",
+  "title": "Не выгрузились какие-то позиции в прайспоставщика, при этом в АИ они есть и процениваются",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornevygruziliskakietopozitsiivprayspostavshchikaprietomvaioniestiprotsenivayutsya/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatorpereprotsenkapozitsiy",
+  "title": "перепроценка позиций",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatorpereprotsenkapozitsiy/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornepomenyalsyastatuspozitsiizakazanasayte",
+  "title": "Не поменялся статус позиции заказа на сайте",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornepomenyalsyastatuspozitsiizakazanasayte/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "sinkhronizatornerabotaetsinkhronizatsiya",
+  "title": "не работает синхронизация",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sinkhronizatornerabotaetsinkhronizatsiya/?IFRAME=Y"
+ },
+ {
+  "path": "По продуктам компании",
+  "code": "ustarevsheepokompaniitradesoft",
+  "title": "Устаревшее ПО",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/ustarevsheepokompaniitradesoft/?IFRAME=Y"
+ },
+ {
+  "path": "Веб-сервисы",
+  "code": "china-catalogs",
+  "title": "Китайские каталоги",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/china-catalogs/?IFRAME=Y"
+ },
+ {
+  "path": "Веб-сервисы",
+  "code": "catcaraftermarket",
+  "title": "Catcar Aftermarket",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/catcaraftermarket/?IFRAME=Y"
+ },
+ {
+  "path": "Веб-сервисы",
+  "code": "vebprotsenka",
+  "title": "Веб-проценка",
+  "href": "page:https://b24.tradesoft.ru/knowledge/techsupservice/vebprotsenka/"
+ },
+ {
+  "path": "Веб-сервисы",
+  "code": "Parts.Index_сatalogs",
+  "title": "Parts.Index",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/Parts.Index_сatalogs/?IFRAME=Y"
+ },
+ {
+  "path": "Веб-сервисы",
+  "code": "partscatalogs",
+  "title": "Parts.Catalogs",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/partscatalogs/?IFRAME=Y"
+ },
+ {
+  "path": "Диагностика",
+  "code": "identify_user_ip",
+  "title": "Выявление ip пользователя",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/identify_user_ip/?IFRAME=Y"
+ },
+ {
+  "path": "Диагностика",
+  "code": "blokskhema",
+  "title": "Анализ скорости проценки",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/blokskhema/?IFRAME=Y"
+ },
+ {
+  "path": "Диагностика",
+  "code": "analizmedlennoyrabotysayta",
+  "title": "Анализ медленной работы сайта",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/analizmedlennoyrabotysayta/?IFRAME=Y"
+ },
+ {
+  "path": "Диагностика",
+  "code": "setevayadiagnostika",
+  "title": "Сетевая диагностика",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/setevayadiagnostika/?IFRAME=Y"
+ },
+ {
+  "path": "Администрирование",
+  "code": "ustanovkainastroykapodklyucheniyakbdvar",
+  "title": "Установка и настройка подключения к БД ВАР",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/ustanovkainastroykapodklyucheniyakbdvar/?IFRAME=Y"
+ },
+ {
+  "path": "Администрирование",
+  "code": "ftp",
+  "title": "FTP",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/ftp/?IFRAME=Y"
+ },
+ {
+  "path": "Администрирование",
+  "code": "stranitsastati",
+  "title": "Настройка домена",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/stranitsastati/?IFRAME=Y"
+ },
+ {
+  "path": "Администрирование",
+  "code": "nastroykapochtovogodomena",
+  "title": "Настройка почтового домена",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/nastroykapochtovogodomena/?IFRAME=Y"
+ },
+ {
+  "path": "",
+  "code": "ssylkinadokumentatsiyu",
+  "title": "Ссылки на документацию",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/ssylkinadokumentatsiyu/?IFRAME=Y"
+ },
+ {
+  "path": "",
+  "code": "zapusksistemnykhinstrumentovwindows",
+  "title": "Запуск системных инструментов windows.",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/zapusksistemnykhinstrumentovwindows/?IFRAME=Y"
+ },
+ {
+  "path": "",
+  "code": "grafikdezhurstv",
+  "title": "График дежурств на телефоне",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/grafikdezhurstv/?IFRAME=Y"
+ },
+ {
+  "path": "",
+  "code": "sla",
+  "title": "SLA",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/sla/?IFRAME=Y"
+ },
+ {
+  "path": "",
+  "code": "dezhurstvana1i2linii",
+  "title": "Дежурства на 1 и 2 линии",
+  "href": "https://b24.tradesoft.ru/knowledge/techsupservice/dezhurstvana1i2linii/?IFRAME=Y"
+ }
+]

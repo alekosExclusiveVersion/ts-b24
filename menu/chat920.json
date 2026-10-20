@@ -1,0 +1,251 @@
+{
+  "chat": 920,
+  "compact": true,
+  "compact_link": false,
+  "emoji": "🔥",
+  "title": "ТОП СТАТЬИ",
+  "lead": "Регламенты, инструкции и диагностика — в одном сообщении. Оно закреплено: открывайте и переходите в нужный раздел.",
+  "kb_root": "https://b24.tradesoft.ru/knowledge/techsupservice/",
+
+  "hot": {
+    "emoji": "🔥",
+    "title": "Самое нужное",
+    "items": [
+      { "code": "autoinstaller_mssql_server", "label": "Установка MSSQL клиентам" },
+      { "code": "partscatalogs", "label": "Parts.Catalogs" },
+      { "code": "setting_network_receipts_printing_service", "label": "ССПЧ через RDP" },
+      { "code": "exportTo1C", "label": "Интеграция PI и 1С" },
+      { "code": "Parts.Index_сatalogs", "label": "PI каталоги" },
+      { "code": "smenatikov", "label": "Смена тиков" },
+      { "code": "instruction_for_LS_PartsIntellect", "label": "Сбор логов СЛ" },
+      { "url": "https://b24.tradesoft.ru/knowledge/ai/manuals/logs/", "label": "Сбор и настройка логов" },
+      { "code": "obnovlenie_Parts.Intellect", "label": "Обновление Parts.Intellect" }
+    ]
+  },
+
+  "sections": [
+    {
+      "emoji": "📋",
+      "title": "Регламенты службы поддержки",
+      "groups": [
+        {
+          "title": "Общее",
+          "items": [
+            { "code": "calls_chats", "label": "Звонки и чаты" },
+            { "code": "kogosprosit", "label": "Полезные ссылки и чаты" },
+            { "code": "reglamenttelegram", "label": "Telegram" },
+            { "code": "FTP_for_clients", "label": "FTP-аккаунты клиентов" }
+          ]
+        },
+        {
+          "title": "Приём и обработка обращений",
+          "items": [
+            { "code": "rabotavb24", "label": "Работа в Б24" },
+            { "code": "projectsiservicemanager", "label": "Projects и Service manager" },
+            { "code": "rabotasprojects", "label": "Работа с projects" },
+            { "code": "rabotasflashpaste", "label": "Flashpaste" },
+            { "code": "shablonyobrashcheniynaotkrytyelinii", "label": "Шаблоны для открытых линий" },
+            { "code": "nastroykagittortoisegit", "label": "Git + TortoiseGit" },
+            { "code": "kommit", "label": "Коммит" }
+          ]
+        },
+        {
+          "title": "Примечания",
+          "items": [
+            { "code": "sostavlenieprimechaniytormozheniya", "label": "Торможения" },
+            { "code": "testirovanieisostavlenieprimechaniydlyaperedachinaotdelvebservisov", "label": "Передача в веб-сервисы" },
+            { "code": "testirovanieisostavlenieprimechaniydlyaperedachinavebotdelvar", "label": "Передача в ВАР" }
+          ]
+        },
+        {
+          "title": "Дежурства",
+          "items": [
+            { "code": "sla", "label": "SLA" },
+            { "code": "dezhurstvana1i2linii", "label": "Дежурства 1 и 2 линии" },
+            { "code": "grafikdezhurstv", "label": "График дежурств" }
+          ]
+        }
+      ]
+    },
+    {
+      "emoji": "📦",
+      "title": "По продуктам",
+      "groups": [
+        {
+          "title": "Parts.Intellect · установка и обновление",
+          "items": [
+            { "code": "reglamentUstanovkiPotentsialuObnovlenieBezTpAi", "label": "Установка Parts.Intellect" },
+            { "code": "obnovlenie_Parts.Intellect", "label": "Обновление на 5.x" }
+          ]
+        },
+        {
+          "title": "Parts.Intellect · регламенты",
+          "items": [
+            { "code": "shemaai", "label": "Схема Parts.Intellect" },
+            { "code": "balansy_parts_intellect", "label": "Балансы и шаблоны" }
+          ]
+        },
+        {
+          "title": "Parts.Intellect · инструкции",
+          "items": [
+            { "code": "kkt", "label": "ККТ" },
+            { "code": "sostavleniyaprimechaniydiadok", "label": "Диадок" },
+            { "code": "autointellektatolshtrikhmosobennostiraboty", "label": "Атол, Штрих-М" },
+            { "code": "stranitsastati_uxvx", "label": "Профилирование" },
+            { "code": "konverttsiyabdpartsintellect", "label": "Конвертация БД" },
+            { "code": "instruction_for_LS_PartsIntellect", "label": "Сбор логов" },
+            { "code": "massovayaprotsenkaanalizprayslistovpartsintellect", "label": "Массовая проценка" },
+            { "code": "markirovka_tovara", "label": "Маркированный товар" },
+            { "code": "nevypolnyaetsyavkhodvbd", "label": "Ошибка №31: вход в БД" },
+            { "code": "exportTo1C", "label": "Интеграция с 1С" },
+            { "code": "autoinstaller_mssql_server", "label": "MSSQL клиентам" },
+            { "code": "setting_network_receipts_printing_service", "label": "ССПЧ через RDP" }
+          ]
+        },
+        {
+          "title": "Parts.Intellect · восстановление БД",
+          "items": [
+            { "code": "restore_from_backup_mssql", "label": "MSSQL" },
+            { "code": "restore_from_backup_pgsql", "label": "PGSQL" }
+          ]
+        },
+        {
+          "title": "Parts.Resource",
+          "items": [
+            { "code": "pravilaobsluzhivaniyavar", "label": "Правила обслуживания" },
+            { "code": "obrabotkazayavokvar", "label": "Обработка заявок" },
+            { "code": "inostrannyeproekty", "label": "Иностранные проекты" },
+            { "code": "rezhimypoiska", "label": "Режимы поиска" },
+            { "code": "vopros_otvet_pr", "label": "Вопрос-ответ" },
+            { "code": "spisokvebpostavshchikovnedostupen", "label": "Список веб-поставщиков недоступен" },
+            { "code": "analiz_nedostupnosti_spiska_web_postavshchikov", "label": "Анализ недоступности поставщиков" },
+            { "code": "tsenoobrazovaniedilerovipokupateleydilerov", "label": "Ценообразование дилеров" }
+          ]
+        },
+        {
+          "title": "Синхронизатор",
+          "items": [
+            { "code": "sinkhronizator", "label": "Обзор" },
+            { "code": "sinkhronizator_njqm", "label": "Схема" },
+            { "code": "skhemaobmenaplatezhamiprisinkhronizatore", "label": "Обмен платежами" },
+            { "code": "smenatikov", "label": "Смена тиков" },
+            { "code": "keysy", "label": "Кейсы" }
+          ]
+        },
+        {
+          "title": "Синхронизатор · кейсы",
+          "items": [
+            { "code": "sinkhronizatornevygruzhaetsyaprayspostavshchikanasayt", "label": "Не выгружается прайс поставщика" },
+            { "code": "sinkhronizatornevygruzhaetsyanalichieskladovskladbezprivyazkikttizpi", "label": "Не выгружается наличие складов" },
+            { "code": "sinkhronizatornevygruziliskakietopozitsiivprayspostavshchikaprietomvaioniestiprotsenivayutsya", "label": "Не выгрузились позиции из прайса" },
+            { "code": "sinkhronizatornapartionnoygibkoyskhemenevygruzhayutsyakakietopredlozheniyaiznalichiya", "label": "Не выгружаются предложения (партионная схема)" },
+            { "code": "sinkhronizatornepomenyalsyastatuspozitsiizakazanasayte", "label": "Не поменялся статус позиции" },
+            { "code": "sinkhronizatorpereprotsenkapozitsiy", "label": "Перепроценка позиций" },
+            { "code": "sinkhronizatornerabotaetsinkhronizatsiya", "label": "Не работает синхронизация" },
+            { "code": "sinkhronizatoroshibkapriinitsializatsiineudaloszagruzitkheshiparoleyizvebvkhoda", "label": "Ошибка: не загрузились хэши паролей" }
+          ]
+        },
+        {
+          "title": "Устаревшее",
+          "items": [
+            { "code": "ustarevsheepokompaniitradesoft", "label": "Устаревшее ПО Tradesoft" }
+          ]
+        }
+      ]
+    },
+    {
+      "emoji": "🌐",
+      "title": "Веб-сервисы",
+      "groups": [
+        {
+          "title": "",
+          "items": [
+            { "code": "partscatalogs", "label": "Parts.Catalogs" },
+            { "code": "Parts.Index_сatalogs", "label": "Parts.Index (PI каталоги)" },
+            { "code": "vebprotsenka", "label": "Веб-проценка" },
+            { "code": "china-catalogs", "label": "Китайские каталоги" },
+            { "code": "catcaraftermarket", "label": "Catcar Aftermarket" }
+          ]
+        }
+      ]
+    },
+    {
+      "emoji": "🩺",
+      "title": "Диагностика",
+      "groups": [
+        {
+          "title": "",
+          "items": [
+            { "code": "analizmedlennoyrabotysayta", "label": "Медленная работа сайта" },
+            { "code": "blokskhema", "label": "Скорость проценки" },
+            { "code": "identify_user_ip", "label": "Выявление IP" },
+            { "code": "setevayadiagnostika", "label": "Сетевая диагностика" }
+          ]
+        }
+      ]
+    },
+    {
+      "emoji": "🛠",
+      "title": "Администрирование",
+      "groups": [
+        {
+          "title": "",
+          "items": [
+            { "code": "ftp", "label": "FTP" },
+            { "code": "stranitsastati", "label": "Настройка домена" },
+            { "code": "nastroykapochtovogodomena", "label": "Почтовый домен" },
+            { "code": "ustanovkainastroykapodklyucheniyakbdvar", "label": "Подключение к БД ВАР" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "more": {
+    "emoji": "📎",
+    "title": "Ещё",
+    "items": [
+      { "code": "zapusksistemnykhinstrumentovwindows", "label": "Запуск системных инструментов Windows" },
+      { "code": "ssylkinadokumentatsiyu", "label": "Ссылки на документацию" }
+    ]
+  },
+
+  "footer_note": "💬 Не нашли ответ — напишите в этот чат.",
+
+  "keyboard": [
+    { "DISPLAY": "LINE", "TEXT": "📚 База знаний", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/" },
+    { "DISPLAY": "LINE", "TEXT": "🛠 MSSQL клиентам", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/autoinstaller_mssql_server/" },
+    { "DISPLAY": "LINE", "TEXT": "🛒 Parts.Catalogs", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/partscatalogs/" },
+    { "DISPLAY": "LINE", "TEXT": "🖨 ССПЧ (RDP)", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/setting_network_receipts_printing_service/" },
+    { "TYPE": "NEWLINE" },
+    { "DISPLAY": "LINE", "TEXT": "🔗 Интеграция 1С", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/exportTo1C/" },
+    { "DISPLAY": "LINE", "TEXT": "🗂 PI каталоги", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/Parts.Index_сatalogs/" },
+    { "DISPLAY": "LINE", "TEXT": "🔁 Смена тиков", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/smenatikov/" },
+    { "DISPLAY": "LINE", "TEXT": "🧾 Сбор логов СЛ", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/instruction_for_LS_PartsIntellect/" },
+    { "TYPE": "NEWLINE" },
+    { "DISPLAY": "LINE", "TEXT": "📄 Сбор и настройка логов", "LINK": "https://b24.tradesoft.ru/knowledge/ai/manuals/logs/" },
+    { "DISPLAY": "LINE", "TEXT": "⬆ Обновление Parts.Intellect", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/obnovlenie_Parts.Intellect/" },
+    { "DISPLAY": "LINE", "TEXT": "🩺 Диагностика", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/setevayadiagnostika/" },
+    { "DISPLAY": "LINE", "TEXT": "📋 Регламенты", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/calls_chats/" },
+    { "TYPE": "NEWLINE" },
+    { "DISPLAY": "LINE", "TEXT": "🕒 График дежурств", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/grafikdezhurstv/" },
+    { "DISPLAY": "LINE", "TEXT": "💬 Полезные ссылки", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/kogosprosit/" },
+    { "DISPLAY": "LINE", "TEXT": "🧰 Правила Parts.Resource", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/pravilaobsluzhivaniyavar/" },
+    { "DISPLAY": "LINE", "TEXT": "🧮 ККТ", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/kkt/" }
+  ],
+
+  "menu": [
+    { "TEXT": "База знаний", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/" },
+    { "TEXT": "Установка MSSQL клиентам", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/autoinstaller_mssql_server/" },
+    { "TEXT": "Parts.Catalogs", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/partscatalogs/" },
+    { "TEXT": "ССПЧ через RDP", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/setting_network_receipts_printing_service/" },
+    { "TEXT": "Интеграция PI и 1С", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/exportTo1C/" },
+    { "TEXT": "PI каталоги", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/Parts.Index_сatalogs/" },
+    { "TEXT": "Смена тиков", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/smenatikov/" },
+    { "TEXT": "Сбор логов СЛ", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/instruction_for_LS_PartsIntellect/" },
+    { "TEXT": "Сбор и настройка логов", "LINK": "https://b24.tradesoft.ru/knowledge/ai/manuals/logs/" },
+    { "TEXT": "Обновление Parts.Intellect", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/obnovlenie_Parts.Intellect/" },
+    { "TEXT": "Сетевая диагностика", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/setevayadiagnostika/" },
+    { "TEXT": "Звонки и чаты", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/calls_chats/" }
+  ]
+}

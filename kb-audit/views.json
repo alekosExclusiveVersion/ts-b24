@@ -1,0 +1,378 @@
+{
+ "FTP_for_clients": [
+  20,
+  8
+ ],
+ "Parts.Index_сatalogs": [
+  264,
+  36
+ ],
+ "aiproblemareshenie": [
+  90,
+  18
+ ],
+ "analiz_nedostupnosti_spiska_web_postavshchikov": [
+  34,
+  13
+ ],
+ "analizmedlennoyrabotysayta": [
+  70,
+  20
+ ],
+ "apipc": [
+  2,
+  1
+ ],
+ "apipc_euye": [
+  3,
+  1
+ ],
+ "autoinstaller_mssql_server": [
+  40,
+  12
+ ],
+ "autointellektatolshtrikhmosobennostiraboty": [
+  92,
+  26
+ ],
+ "balansy_parts_intellect": [
+  21,
+  13
+ ],
+ "blokskhema": [
+  85,
+  30
+ ],
+ "calls_chats": [
+  175,
+  29
+ ],
+ "catcaraftermarket": [
+  19,
+  10
+ ],
+ "china-catalogs": [
+  37,
+  13
+ ],
+ "dezhurstvana1i2linii": [
+  47,
+  21
+ ],
+ "dobavlenieotvetovvwikibot": [
+  28,
+  12
+ ],
+ "exportTo1C": [
+  36,
+  9
+ ],
+ "ftp": [
+  74,
+  30
+ ],
+ "grafikdezhurstv": [
+  752,
+  40
+ ],
+ "identify_user_ip": [
+  70,
+  21
+ ],
+ "inostrannyeproekty": [
+  23,
+  13
+ ],
+ "instruction_for_LS_PartsIntellect": [
+  56,
+  13
+ ],
+ "ispravleniebalansovvai": [
+  52,
+  12
+ ],
+ "keysy": [
+  8,
+  4
+ ],
+ "kkt": [
+  142,
+  26
+ ],
+ "kogosprosit": [
+  592,
+  42
+ ],
+ "kommit": [
+  189,
+  44
+ ],
+ "kommity": [
+  6,
+  4
+ ],
+ "konverttsiyabdpartsintellect": [
+  64,
+  19
+ ],
+ "markirovka_tovara": [
+  32,
+  17
+ ],
+ "massovayaprotsenkaanalizprayslistovpartsintellect": [
+  4,
+  3
+ ],
+ "mssqlrazvorachivaniebd": [
+  4,
+  3
+ ],
+ "nastroykagittortoisegit": [
+  57,
+  17
+ ],
+ "nastroykapochtovogodomena": [
+  97,
+  23
+ ],
+ "nevypolnyaetsyavkhodvbd": [
+  20,
+  10
+ ],
+ "obnovlenie_Parts.Intellect": [
+  745,
+  33
+ ],
+ "obrabotkazayavokvar": [
+  361,
+  32
+ ],
+ "partscatalogs": [
+  135,
+  18
+ ],
+ "pravilaobsluzhivaniyavar": [
+  581,
+  49
+ ],
+ "projectsiservicemanager": [
+  130,
+  28
+ ],
+ "rabotasflashpaste": [
+  94,
+  24
+ ],
+ "rabotaslogamislpartsintellect": [
+  2,
+  1
+ ],
+ "rabotasmarkirovannymtovaromv2025m": [
+  2,
+  1
+ ],
+ "rabotasprojects": [
+  152,
+  31
+ ],
+ "rabotavb24": [
+  135,
+  33
+ ],
+ "razvorachivaniebdmssql": [
+  3,
+  2
+ ],
+ "realizatsiyavebpostavshchikov": [
+  9,
+  5
+ ],
+ "reglamentUstanovkiPotentsialuObnovlenieBezTpAi": [
+  248,
+  31
+ ],
+ "reglamenttelegram": [
+  55,
+  22
+ ],
+ "restore_from_backup_mssql": [
+  235,
+  19
+ ],
+ "restore_from_backup_pgsql": [
+  75,
+  15
+ ],
+ "rezhimypoiska": [
+  16,
+  9
+ ],
+ "rezultatypoiska": [
+  82,
+  18
+ ],
+ "rezultatypoiska_qkuh": [
+  179,
+  24
+ ],
+ "saydbar": [
+  2,
+  1
+ ],
+ "setevayadiagnostika": [
+  94,
+  20
+ ],
+ "setting_network_receipts_printing_service": [
+  59,
+  15
+ ],
+ "shablonyobrashcheniynaotkrytyelinii": [
+  20,
+  8
+ ],
+ "shemaai": [
+  198,
+  31
+ ],
+ "sinkhronizator": [
+  17,
+  7
+ ],
+ "sinkhronizator_mtdi": [
+  60,
+  16
+ ],
+ "sinkhronizator_njqm": [
+  97,
+  29
+ ],
+ "sinkhronizatornapartionnoygibkoyskhemenevygruzhayutsyakakietopredlozheniyaiznalichiya": [
+  9,
+  6
+ ],
+ "sinkhronizatornepomenyalsyastatuspozitsiizakazanasayte": [
+  11,
+  6
+ ],
+ "sinkhronizatornerabotaetsinkhronizatsiya": [
+  12,
+  7
+ ],
+ "sinkhronizatornevygruzhaetsyanalichieskladovskladbezprivyazkikttizpi": [
+  12,
+  7
+ ],
+ "sinkhronizatornevygruzhaetsyaprayspostavshchikanasayt": [
+  8,
+  6
+ ],
+ "sinkhronizatornevygruziliskakietopozitsiivprayspostavshchikaprietomvaioniestiprotsenivayutsya": [
+  7,
+  5
+ ],
+ "sinkhronizatoroshibkapriinitsializatsiineudaloszagruzitkheshiparoleyizvebvkhoda": [
+  8,
+  5
+ ],
+ "sinkhronizatorpereprotsenkapozitsiy": [
+  10,
+  5
+ ],
+ "skhemaobmenaplatezhamiprisinkhronizatore": [
+  49,
+  16
+ ],
+ "sla": [
+  251,
+  33
+ ],
+ "smenatikov": [
+  87,
+  18
+ ],
+ "sostavlenieprimechaniytormozheniya": [
+  46,
+  17
+ ],
+ "sostavleniyaprimechaniydiadok": [
+  37,
+  13
+ ],
+ "spisokvebpostavshchikovnedostupen": [
+  30,
+  15
+ ],
+ "ssylkinadokumentatsiyu": [
+  200,
+  35
+ ],
+ "statyaporazdelustatistikaprotsenok": [
+  4,
+  2
+ ],
+ "stolzakazovavtozapchastey": [
+  49,
+  17
+ ],
+ "stranitsakategorii": [
+  3,
+  2
+ ],
+ "stranitsastati": [
+  128,
+  36
+ ],
+ "stranitsastati_uxvx": [
+  73,
+  9
+ ],
+ "testirovanieisostavlenieprimechaniydlyaperedachinaotdelvebservisov": [
+  283,
+  27
+ ],
+ "testirovanieisostavlenieprimechaniydlyaperedachinavebotdelvar": [
+  131,
+  32
+ ],
+ "tsenoobrazovaniedilerovipokupateleydilerov": [
+  45,
+  21
+ ],
+ "uchyettovaroviuslug": [
+  37,
+  13
+ ],
+ "ustanovkainastroykapodklyucheniyakbdvar": [
+  76,
+  25
+ ],
+ "ustarevsheepo": [
+  3,
+  1
+ ],
+ "ustarevsheepokompaniitradesoft": [
+  40,
+  18
+ ],
+ "vebprotsenka": [
+  56,
+  18
+ ],
+ "vopros_otvet_pr": [
+  112,
+  37
+ ],
+ "vosstanovleniebdsqlposleudaleniyafaylalog": [
+  2,
+  1
+ ],
+ "vyyavlenieippolzovatelya": [
+  2,
+  1
+ ],
+ "zapusksistemnykhinstrumentovwindows": [
+  51,
+  15
+ ]
+}

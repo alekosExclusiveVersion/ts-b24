@@ -1,0 +1,15 @@
+{
+ "pairs": [
+  {"a": "apipc", "b": "apipc_euye", "len_a": 909, "len_b": 909, "jaccard": 0.93, "verdict": "дубликат"},
+  {"a": "sinkhronizator", "b": "sinkhronizator_mtdi", "len_a": 924, "len_b": 925, "jaccard": 0.93, "verdict": "дубликат"},
+  {"a": "sinkhronizator", "b": "sinkhronizator_njqm", "len_a": 924, "len_b": 1002, "jaccard": 0.83, "verdict": "почти дубликат"},
+  {"a": "sinkhronizator_mtdi", "b": "sinkhronizator_njqm", "len_a": 925, "len_b": 1002, "jaccard": 0.83, "verdict": "почти дубликат"},
+  {"a": "rezultatypoiska", "b": "rezultatypoiska_qkuh", "len_a": 1859, "len_b": 1696, "jaccard": 0.48, "verdict": "пересекаются"},
+  {"a": "identify_user_ip", "b": "vyyavlenieippolzovatelya", "len_a": 1373, "len_b": 947, "jaccard": 0.38, "verdict": "пересекаются"},
+  {"a": "markirovka_tovara", "b": "rabotasmarkirovannymtovaromv2025m", "len_a": 2606, "len_b": 973, "jaccard": 0.16, "verdict": "разные"},
+  {"a": "razvorachivaniebdmssql", "b": "restore_from_backup_mssql", "len_a": 945, "len_b": 3021, "jaccard": 0.16, "verdict": "разные"},
+  {"a": "mssqlrazvorachivaniebd", "b": "restore_from_backup_pgsql", "len_a": 945, "len_b": 3857, "jaccard": 0.12, "verdict": "разные"},
+  {"a": "stranitsastati", "b": "stranitsastati_uxvx", "len_a": 5378, "len_b": 5579, "jaccard": 0.09, "verdict": "разные"},
+  {"a": "kommit", "b": "kommity", "len_a": 4636, "len_b": 5817, "jaccard": 0.05, "verdict": "разные"}
+ ]
+}
