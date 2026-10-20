@@ -162,6 +162,22 @@ class B24Client:
         resp = self.call("batch", params)
         return resp.get("result", {}).get("result", {})
 
+    def batch_gentle(self, commands, pause=1.0, max_tries=6):
+        """batch с ретраями при лимитах/сети (как call_gentle).
+        Неретрабельные ошибки API (B24Error) пробрасываются сразу."""
+        wait = pause
+        for attempt in range(1, max_tries + 1):
+            try:
+                return self.batch(commands)
+            except _RetryableError as e:
+                _log.warning("batch retry %d/%d: %s", attempt, max_tries,
+                             str(e)[:120])
+                if attempt == max_tries:
+                    raise B24Error(
+                        f"batch: слишком много повторов: {e}")
+                time.sleep(wait)
+                wait = min(wait * 2, 30)
+
     def get_all(self, method, params=None, chunk=50):
         return [i for pg, _ in self.paged_gentle(method, params, step=chunk)
                 for i in pg]

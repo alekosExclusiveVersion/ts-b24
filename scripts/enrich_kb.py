@@ -17,7 +17,11 @@ CONTACT_FIELDS = ["ID", "NAME", "LAST_NAME", "COMPANY_ID", "EMAIL", "PHONE",
 
 def connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    return sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=30000;")
+    conn.execute("PRAGMA synchronous=NORMAL;")
+    return conn
 
 
 def _join_multi(v, field="VALUE"):
@@ -41,6 +45,7 @@ def ensure_schema(conn):
         );
         CREATE INDEX IF NOT EXISTS idx_deals_company ON deals(COMPANY_ID);
         CREATE INDEX IF NOT EXISTS idx_deals_contact ON deals(CONTACT_ID);
+        CREATE INDEX IF NOT EXISTS idx_deals_date_modify ON deals(DATE_MODIFY);
     """)
     conn.commit()
 
@@ -48,10 +53,12 @@ def ensure_schema(conn):
 def load_companies(client, conn, max_rec=None, resume=0):
     cols = ["ID", "TITLE", "COMPANY_TYPE", "INDUSTRY", "REVENUE", "EMAIL",
             "PHONE", "DATE_MODIFY"]
-    insert = ("INSERT OR IGNORE INTO companies (ID,TITLE,COMPANY_TYPE,"
-              "INDUSTRY,REVENUE,EMAIL,PHONE,DATE_MODIFY) VALUES (?,?,?,?,?,?,?,?)")
-    update = ("UPDATE companies SET TITLE=?,COMPANY_TYPE=?,INDUSTRY=?,REVENUE=?,"
-              "EMAIL=?,PHONE=?,DATE_MODIFY=? WHERE ID=?")
+    upsert = ("INSERT INTO companies (ID,TITLE,COMPANY_TYPE,"
+              "INDUSTRY,REVENUE,EMAIL,PHONE,DATE_MODIFY) VALUES (?,?,?,?,?,?,?,?) "
+              "ON CONFLICT(ID) DO UPDATE SET TITLE=excluded.TITLE,"
+              "COMPANY_TYPE=excluded.COMPANY_TYPE,INDUSTRY=excluded.INDUSTRY,"
+              "REVENUE=excluded.REVENUE,EMAIL=excluded.EMAIL,"
+              "PHONE=excluded.PHONE,DATE_MODIFY=excluded.DATE_MODIFY")
     n = 0
 
     def save_off(off):
@@ -71,15 +78,7 @@ def load_companies(client, conn, max_rec=None, resume=0):
                    it.get("DATE_MODIFY"))
             buf.append(row)
         if buf:
-            ids = [r[0] for r in buf]
-            ph = ",".join("?" * len(ids))
-            existing = {r[0] for r in conn.execute(
-                f"SELECT ID FROM companies WHERE ID IN ({ph})", ids)}
-            for row in buf:
-                if row[0] in existing:
-                    conn.execute(update, (*row[1:], row[0]))
-                else:
-                    conn.execute(insert, row)
+            conn.executemany(upsert, buf)
             conn.commit()
             n += len(buf)
     # сохранить финальный offset
@@ -92,11 +91,14 @@ def load_contacts(client, conn, max_rec=None, resume=0):
                  "COMPANY_TITLE TEXT, EMAIL TEXT, PHONE TEXT, DATE_MODIFY TEXT);")
     col = ["ID", "NAME", "LAST_NAME", "NAME_LAST", "COMPANY_ID",
            "COMPANY_TITLE", "EMAIL", "PHONE", "DATE_MODIFY"]
-    insert = ("INSERT OR IGNORE INTO contacts (ID,NAME,LAST_NAME,NAME_LAST,"
+    upsert = ("INSERT INTO contacts (ID,NAME,LAST_NAME,NAME_LAST,"
               "COMPANY_ID,COMPANY_TITLE,EMAIL,PHONE,DATE_MODIFY) "
-              "VALUES (?,?,?,?,?,?,?,?,?)")
-    update = ("UPDATE contacts SET NAME=?,LAST_NAME=?,NAME_LAST=?,COMPANY_ID=?,"
-              "COMPANY_TITLE=?,EMAIL=?,PHONE=?,DATE_MODIFY=? WHERE ID=?")
+              "VALUES (?,?,?,?,?,?,?,?,?) "
+              "ON CONFLICT(ID) DO UPDATE SET NAME=excluded.NAME,"
+              "LAST_NAME=excluded.LAST_NAME,NAME_LAST=excluded.NAME_LAST,"
+              "COMPANY_ID=excluded.COMPANY_ID,"
+              "COMPANY_TITLE=excluded.COMPANY_TITLE,EMAIL=excluded.EMAIL,"
+              "PHONE=excluded.PHONE,DATE_MODIFY=excluded.DATE_MODIFY")
     # кэш названий компаний
     comp_title = {}
     for r in conn.execute("SELECT ID, TITLE FROM companies").fetchall():
@@ -132,16 +134,7 @@ def load_contacts(client, conn, max_rec=None, resume=0):
             comp_title[cid] = r[0] if r else None
         for row in buf:
             row[5] = comp_title.get(row[4])
-        ids = [row[0] for row in buf]
-        ph = ",".join("?" * len(ids))
-        existing = {r[0] for r in conn.execute(
-            f"SELECT ID FROM contacts WHERE ID IN ({ph})", ids)}
-        for row in buf:
-            if row[0] in existing:
-                conn.execute(update, (*row[1:], row[0]))
-                existing.add(row[0])
-            else:
-                conn.execute(insert, row)
+        conn.executemany(upsert, buf)
         conn.commit()
         n += len(buf)
     return n, total

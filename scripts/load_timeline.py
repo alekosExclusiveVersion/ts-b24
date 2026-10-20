@@ -23,8 +23,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from b24_client import B24Client, PROJECT_ROOT, _RetryableError
-from sync_logger import get_logger
+from b24_client import B24Client, PROJECT_ROOT
+from sync_logger import acquire_lock, get_logger
 from sync_alert import alert_completed, alert_failed
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
@@ -79,8 +79,13 @@ CREATE INDEX IF NOT EXISTS idx_activities_created ON deal_activities(created);
 def connect(db_path=None):
     path = Path(db_path) if db_path else DB_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path)
+    conn = sqlite3.connect(path, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=30000;")
+    conn.execute("PRAGMA synchronous=NORMAL;")
     conn.executescript(SCHEMA)
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_comments_created "
+                 "ON deal_comments(created)")
     conn.commit()
     return conn
 
@@ -203,6 +208,7 @@ def run_incremental(client, conn, args):
     _log.info("Инкрементальный режим: сделки с DATE_MODIFY > %s", last_date)
 
     offset_in_run = 0
+    fail_streak = 0
     while True:
         deal_ids = fetch_deal_ids_after(conn, since_date, offset_in_run, batch)
         if not deal_ids:
@@ -210,12 +216,18 @@ def run_incremental(client, conn, args):
         cmds = build_batch_cmds(deal_ids)
         ok = False
         try:
-            resp = client.batch(cmds)
+            resp = client.batch_gentle(cmds)
             ok = True
         except Exception as e:
-            _log.warning("  batch ошибка: %s — повтор через 2с", str(e)[:150])
+            fail_streak += 1
+            _log.warning("  batch ошибка (%d/10): %s",
+                         fail_streak, str(e)[:150])
+            if fail_streak >= 10:
+                raise RuntimeError(
+                    f"batch: 10 неуспешных попыток подряд, стоп: {e}")
             time.sleep(2)
         if ok:
+            fail_streak = 0
             for i, did in enumerate(deal_ids):
                 comments = resp.get(f"c{i}") or []
                 acts = resp.get(f"a{i}") or []
@@ -267,6 +279,10 @@ def main():
     ap.add_argument("--db", default=str(DB_PATH),
                     help="Путь к БД (по умолчанию data/ts_b24.db)")
     args = ap.parse_args()
+
+    if not acquire_lock("timeline"):
+        print("load_timeline уже запущен, выхожу")
+        return
 
     t_start = time.time()
     mode = "incremental" if args.incremental else "full"
@@ -333,6 +349,7 @@ def _run(args):
             "VALUES ('timeline_deal_offset', ?)", (str(val),))
         conn.commit()
 
+    fail_streak = 0
     while True:
         if offset >= total:
             break
@@ -342,13 +359,18 @@ def _run(args):
         cmds = build_batch_cmds(deal_ids)
         ok = False
         try:
-            resp = client.batch(cmds)
+            resp = client.batch_gentle(cmds)
             ok = True
-        except (_RetryableError, Exception) as e:
-            _log.warning("  batch offset=%d ошибка: %s — повтор через 2с",
-                         offset, str(e)[:150])
+        except Exception as e:
+            fail_streak += 1
+            _log.warning("  batch offset=%d ошибка (%d/10): %s",
+                         offset, fail_streak, str(e)[:150])
+            if fail_streak >= 10:
+                raise RuntimeError(
+                    f"batch: 10 неуспешных попыток подряд, стоп: {e}")
             time.sleep(2)
         if ok:
+            fail_streak = 0
             for i, did in enumerate(deal_ids):
                 comments = resp.get(f"c{i}") or []
                 acts = resp.get(f"a{i}") or []

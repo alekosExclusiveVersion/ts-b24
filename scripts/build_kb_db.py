@@ -8,7 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from b24_client import B24Client, PROJECT_ROOT
-from sync_logger import get_logger
+from sync_logger import acquire_lock, get_logger
 from sync_alert import alert_completed, alert_failed
 
 DB_PATH = PROJECT_ROOT / "data" / "ts_b24.db"
@@ -125,7 +125,11 @@ def deal_cols_sql():
 
 def connect():
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    return sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=30000;")
+    conn.execute("PRAGMA synchronous=NORMAL;")
+    return conn
 
 
 def rebuild(conn):
@@ -252,11 +256,12 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
                since_date_modify=None, collect_files=True,
                resume_offset=0, save_offset_cb=None):
     deal_columns = ["ID"] + [f for f in DEAL_FIELDS if f != "ID"]
-    insert_sql = (f"INSERT OR IGNORE INTO deals ({', '.join(deal_columns)}) "
-                  f"VALUES ({', '.join('?' * len(deal_columns))})")
-    update_sql = (f"UPDATE deals SET "
-                  f"{', '.join(f'{c}=?' for c in deal_columns if c != 'ID')} "
-                  f"WHERE ID=?")
+    upsert_sql = (
+        f"INSERT INTO deals ({', '.join(deal_columns)}) "
+        f"VALUES ({', '.join('?' * len(deal_columns))}) "
+        f"ON CONFLICT(ID) DO UPDATE SET "
+        f"{', '.join(f'{c}=excluded.{c}' for c in deal_columns if c != 'ID')}"
+    )
     select = DEAL_FIELDS[:]
     file_queried = False
     if collect_files:
@@ -281,20 +286,17 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
 
     def flush():
         nonlocal inserted, updated
-        ids = [row[0] for row in buffer]
-        if not ids:
+        if not buffer:
             return
+        ids = [row[0] for row in buffer]
         placeholders = ",".join("?" * len(ids))
         existing = {r[0] for r in conn.execute(
             f"SELECT ID FROM deals WHERE ID IN ({placeholders})", ids)}
-        for row in buffer:
-            if row[0] in existing:
-                conn.execute(update_sql, (*row[1:], row[0]))
-                updated += 1
-            else:
-                inserted += 1
-        conn.executemany(insert_sql, buffer)
+        new = sum(1 for row in buffer if row[0] not in existing)
+        conn.executemany(upsert_sql, buffer)
         conn.commit()
+        inserted += new
+        updated += len(buffer) - new
         buffer.clear()
 
     def on_progress(fetched, total):
@@ -327,7 +329,7 @@ def load_deals(client, conn, max_deals=None, progress_every=10,
 
 def build_indexes(conn):
     for col in ("CATEGORY_ID", "STAGE_ID", "ASSIGNED_BY_ID", "DATE_CREATE",
-                "TITLE"):
+                "DATE_MODIFY", "TITLE"):
         try:
             conn.execute(f"CREATE INDEX IF NOT EXISTS idx_deals_{col} "
                          f"ON deals ({col})")
@@ -347,6 +349,10 @@ def main():
                     help="Инкрементальный режим: догрузить только изменённые "
                          "после last_date_modify сделки (для регулярного пополнения)")
     args = ap.parse_args()
+
+    if not acquire_lock("deals"):
+        print("build_kb_db уже запущен, выхожу")
+        return
 
     t_start = time.time()
     mode = "rebuild" if args.rebuild else (

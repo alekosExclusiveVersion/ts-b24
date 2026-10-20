@@ -49,7 +49,9 @@ def main():
     employees = extract_rows(args.src)
     print(f"Сотрудников извлечено: {len(employees)}")
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    conn.execute("PRAGMA busy_timeout=30000;")
     # расширим схему users
     cols = [r[1] for r in conn.execute("PRAGMA table_info(users)")]
     if "DEPARTMENT" not in cols:

@@ -1,11 +1,35 @@
+import fcntl
 import logging
 import logging.handlers
+import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 LOG_DIR = PROJECT_ROOT / "data"
 
 _loggers = {}
+_locks = {}
+
+
+def acquire_lock(name):
+    """Неблокирующий файловый лок против двойного запуска cron-задач.
+
+    Возвращает True, если лок захвачен. Повторный процесс должен
+    тихо завершиться (вернётся False) — БД одна, параллельные
+    писатели в неё не нужны.
+    """
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    path = LOG_DIR / f"sync_{name}.lock"
+    fh = open(path, "w")
+    try:
+        fcntl.flock(fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        fh.close()
+        return False
+    fh.write(str(os.getpid()))
+    fh.flush()
+    _locks[name] = fh
+    return True
 
 
 def get_logger(name, log_file=None):
