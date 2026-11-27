@@ -3,7 +3,7 @@
   "compact": true,
   "compact_link": false,
   "emoji": "🔥",
-  "title": "ТОП СТАТЬИ",
+  "title": "ТОП СТАТЬИ НА ОСНОВЕ БЗ ТЕХПОД В Б24",
   "lead": "Регламенты, инструкции и диагностика — в одном сообщении. Оно закреплено: открывайте и переходите в нужный раздел.",
   "kb_root": "https://b24.tradesoft.ru/knowledge/techsupservice/",
 
@@ -225,6 +225,7 @@
     { "TYPE": "NEWLINE" },
     { "DISPLAY": "LINE", "TEXT": "📄 Сбор и настройка логов", "LINK": "https://b24.tradesoft.ru/knowledge/ai/manuals/logs/" },
     { "DISPLAY": "LINE", "TEXT": "⬆ Обновление Parts.Intellect", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/obnovlenie_Parts.Intellect/" },
+    { "DISPLAY": "LINE", "TEXT": "🚫 PI выше 5.12 не ставится", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/neustanavlivaetsyaversiyapartsintellectvyshe512/" },
     { "DISPLAY": "LINE", "TEXT": "🩺 Диагностика", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/setevayadiagnostika/" },
     { "DISPLAY": "LINE", "TEXT": "📋 Регламенты", "LINK": "https://b24.tradesoft.ru/knowledge/techsupservice/calls_chats/" },
     { "TYPE": "NEWLINE" },
